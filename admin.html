@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — One Tattoo Arts</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --black:#050505;--white:#f0ebe3;--red:#8b1c1c;--gold:#c9a96e;
+  --grey:#0f0f0f;--grey2:#141414;--grey3:#1a1a1a;--grey4:#202020;
+  --mid:#3a3a3a;--light:#9a9088;--border:rgba(255,255,255,0.07);
+  --sidebar:220px;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--grey);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;}
+.cursor{position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+
+/* ===== LOGIN SCREEN ===== */
+.login-screen{
+  position:fixed;inset:0;z-index:500;
+  background:var(--black);display:flex;align-items:center;justify-content:center;
+}
+.login-left{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 40% 50%,#1a0404,var(--black));
+  height:100vh;padding:4rem;
+}
+.login-left-content{text-align:center;}
+.login-logo-big{font-family:'Bebas Neue',sans-serif;font-size:5rem;letter-spacing:.4em;color:var(--white);line-height:1;}
+.login-tagline{font-family:'Playfair Display',serif;font-style:italic;font-size:1.2rem;color:var(--light);margin-top:.5rem;}
+.login-art{
+  margin-top:3rem;width:280px;height:280px;
+  border:1px solid var(--border);position:relative;overflow:hidden;
+}
+.login-art img{width:100%;height:100%;object-fit:cover;filter:grayscale(80%);opacity:.6;}
+.login-art::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 50%,rgba(139,28,28,.3));
+}
+.login-right{
+  width:420px;height:100vh;background:var(--grey2);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem;border-left:1px solid var(--border);
+}
+.login-title{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:.25em;margin-bottom:.5rem;}
+.login-sub{font-family:'Inter',sans-serif;font-weight:300;font-size:.85rem;color:var(--light);margin-bottom:3rem;letter-spacing:.05em;}
+.login-label{font-family:'Inter',sans-serif;font-weight:400;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--light);margin-bottom:.5rem;display:block;}
+.login-input{
+  width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  color:var(--white);font-family:'Inter',sans-serif;font-size:.9rem;
+  padding:.9rem 1rem;margin-bottom:1.5rem;outline:none;transition:border-color .3s;
+}
+.login-input:focus{border-color:var(--gold);}
+.login-input::placeholder{color:var(--mid);}
+.login-btn{
+  width:100%;background:var(--red);border:none;color:var(--white);
+  font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.35em;
+  padding:1.1rem;cursor:pointer;transition:background .3s;margin-top:.5rem;
+}
+.login-btn:hover{background:#a52222;}
+.login-note{font-family:'Inter',sans-serif;font-weight:300;font-size:.72rem;color:var(--mid);text-align:center;margin-top:1.5rem;letter-spacing:.1em;}
+
+/* ===== DASHBOARD ===== */
+.dashboard{display:flex;height:100vh;overflow:hidden;display:none;}
+
+/* Sidebar */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:var(--black);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+}
+.sidebar-logo{
+  padding:1.8rem 1.5rem;border-bottom:1px solid var(--border);
+}
+.sidebar-logo-main{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.3em;color:var(--white);}
+.sidebar-logo-sub{font-family:'Playfair Display',serif;font-style:italic;font-size:.65rem;letter-spacing:.2em;color:var(--light);}
+.sidebar-nav{flex:1;padding:1.5rem 0;overflow-y:auto;}
+.nav-section-title{font-family:'Inter',sans-serif;font-weight:500;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--mid);padding:.5rem 1.5rem;margin-bottom:.3rem;}
+.nav-item{
+  display:flex;align-items:center;gap:.8rem;
+  padding:.75rem 1.5rem;cursor:pointer;
+  font-family:'Inter',sans-serif;font-weight:300;font-size:.82rem;
+  color:var(--light);transition:all .2s;position:relative;
+  text-decoration:none;
+}
+.nav-item:hover{color:var(--white);background:rgba(255,255,255,.03);}
+.nav-item.active{color:var(--white);background:rgba(255,255,255,.05);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);}
+.nav-icon{font-size:1rem;width:18px;text-align:center;}
+.nav-badge{margin-left:auto;background:var(--red);color:white;font-size:.6rem;font-weight:500;padding:.1rem .5rem;border-radius:10px;}
+.sidebar-footer{padding:1.5rem;border-top:1px solid var(--border);}
+.sidebar-user{display:flex;align-items:center;gap:.8rem;}
+.sidebar-avatar{width:32px;height:32px;background:var(--grey4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--gold);}
+.sidebar-user-info{}
+.sidebar-user-name{font-family:'Inter',sans-serif;font-weight:500;font-size:.82rem;color:var(--white);}
+.sidebar-user-role{font-family:'Inter',sans-serif;font-weight:300;font-size:.7rem;color:var(--mid);}
+.logout-btn{margin-top:.8rem;width:100%;background:none;border:1px solid rgba(255,255,255,.08);color:var(--light);font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;padding:.5rem;cursor:pointer;transition:all .3s;}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* Main Content */
+.main-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.topbar{
+  padding:1.2rem 2.5rem;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--grey2);flex-shrink:0;
+}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.2em;color:var(--white);}
+.topbar-sub{font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;color:var(--light);margin-top:.1rem;}
+.topbar-actions{display:flex;gap:.8rem;align-items:center;}
+.topbar-btn{
+  font-family:'Inter',sans-serif;font-weight:400;font-size:.75rem;
+  letter-spacing:.1em;border:1px solid var(--border);color:var(--light);
+  background:none;padding:.5rem 1.2rem;cursor:pointer;transition:all .3s;
+}
+.topbar-btn:hover{border-color:var(--border2);color:var(--white);}
+.topbar-btn.primary{background:var(--red);border-color:var(--red);color:white;}
+.topbar-btn.primary:hover{background:#a52222;}
+.page-content{padding:2.5rem;flex:1;}
+
+/* Panels */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* Dashboard Overview */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:2rem;}
+.kpi-card{background:var(--grey2);padding:2rem 1.8rem;}
+.kpi-label{font-family:'Inter',sans-serif;font-weight:300;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--light);margin-bottom:.8rem;}
+.kpi-value{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:.05em;color:var(--white);line-height:1;}
+.kpi-change{font-family:'Inter',sans-serif;font-weight:300;font-size:.75rem;margin-top:.5rem;}
+.kpi-change.up{color:var(--success);}
+.kpi-change.down{color:var(--danger);}
+
+.chart-grid{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+.chart-box{background:var(--grey2);border:1px solid var(--border);padding:2rem;}
+.chart-title{font-family:'Inter',sans-serif;font-weight:500;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;color:var(--white);margin-bottom:.3rem;}
+.chart-desc{font-family:'Inter',sans-serif;font-weight:300;font-size:.72rem;color:var(--mid);margin-bottom:1.5rem;}
+.chart-area{height:180px;display:flex;align-items:flex-end;gap:6px;}
+.chart-bar{flex:1;background:var(--grey4);position:relative;transition:background .3s;cursor:pointer;}
+.chart-bar:hover{background:var(--red);}
+.chart-bar .bar-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,var(--red),rgba(139,28,28,.4));transition:height .8s ease;}
+.chart-bar .bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-family:'Inter',sans-serif;font-size:.55rem;color:var(--mid);white-space:nowrap;}
+.donut-wrap{display:flex;align-items:center;justify-content:center;height:180px;}
+.donut-legend{margin-top:1rem;}
+.donut-item{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;}
+.donut-dot{width:8px;height:8px;border-radius:50%;}
+.donut-name{font-family:'Inter',sans-serif;font-weight:300;font-size:.75rem;color:var(--light);}
+.donut-pct{font-family:'Inter',sans-serif;font-weight:500;font-size:.75rem;color:var(--white);margin-left:auto;}
+
+.recent-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.recent-box{background:var(--grey2);border:1px solid var(--border);padding:2rem;}
+.recent-title{font-family:'Inter',sans-serif;font-weight:500;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;color:var(--white);margin-bottom:1.5rem;}
+.booking-item{display:flex;align-items:center;gap:1rem;padding:.8rem 0;border-bottom:1px solid var(--border);}
+.booking-item:last-child{border-bottom:none;}
+.booking-avatar{width:36px;height:36px;background:var(--grey4);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:500;color:var(--gold);}
+.booking-name{font-family:'Inter',sans-serif;font-weight:400;font-size:.82rem;color:var(--white);}
+.booking-meta{font-family:'Inter',sans-serif;font-weight:300;font-size:.72rem;color:var(--light);margin-top:.1rem;}
+.booking-status{margin-left:auto;font-size:.65rem;font-weight:500;letter-spacing:.1em;padding:.25rem .6rem;}
+.booking-status.confirmed{background:rgba(34,197,94,.1);color:var(--success);border:1px solid rgba(34,197,94,.2);}
+.booking-status.pending{background:rgba(245,158,11,.1);color:var(--warning);border:1px solid rgba(245,158,11,.2);}
+.booking-status.completed{background:rgba(255,255,255,.05);color:var(--light);border:1px solid var(--border);}
+
+/* Upload Section */
+.upload-zone{
+  border:2px dashed rgba(255,255,255,.12);padding:4rem;
+  text-align:center;cursor:pointer;transition:border-color .3s,background .3s;
+  margin-bottom:2rem;
+}
+.upload-zone:hover{border-color:var(--gold);background:rgba(201,169,110,.03);}
+.upload-icon{font-size:3rem;margin-bottom:1rem;opacity:.4;}
+.upload-text{font-family:'Inter',sans-serif;font-weight:300;font-size:.9rem;color:var(--light);margin-bottom:.5rem;}
+.upload-subtext{font-family:'Inter',sans-serif;font-weight:300;font-size:.75rem;color:var(--mid);}
+.upload-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+.form-group{display:flex;flex-direction:column;gap:.5rem;}
+.form-label{font-family:'Inter',sans-serif;font-weight:400;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--light);}
+.form-input, .form-select{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--white);font-family:'Inter',sans-serif;font-size:.85rem;
+  padding:.75rem 1rem;outline:none;transition:border-color .3s;
+}
+.form-input:focus,.form-select:focus{border-color:var(--gold);}
+.form-select option{background:var(--grey2);}
+.form-input::placeholder{color:var(--mid);}
+
+/* Gallery Manager */
+.gallery-manager-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:2rem;}
+.gm-item{background:var(--grey2);position:relative;overflow:hidden;}
+.gm-img{width:100%;aspect-ratio:1;object-fit:cover;filter:grayscale(50%);}
+.gm-overlay{position:absolute;inset:0;background:rgba(5,5,5,.7);opacity:0;transition:opacity .3s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;}
+.gm-item:hover .gm-overlay{opacity:1;}
+.gm-btn{background:none;border:1px solid rgba(255,255,255,.3);color:white;font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.15em;padding:.4rem .9rem;cursor:pointer;transition:all .2s;width:90px;}
+.gm-btn:hover{border-color:white;}
+.gm-btn.del{border-color:rgba(239,68,68,.4);color:#ef4444;}
+.gm-btn.del:hover{border-color:#ef4444;background:rgba(239,68,68,.1);}
+.gm-tag{position:absolute;top:.5rem;left:.5rem;background:var(--red);color:white;font-size:.6rem;letter-spacing:.1em;padding:.2rem .5rem;font-family:'Inter',sans-serif;}
+
+/* Reviews Manager */
+.review-table{width:100%;border-collapse:collapse;}
+.review-table th{background:var(--grey4);font-family:'Inter',sans-serif;font-weight:500;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--light);padding:1rem 1.2rem;text-align:left;border-bottom:1px solid var(--border);}
+.review-table td{padding:1.2rem;border-bottom:1px solid var(--border);font-family:'Inter',sans-serif;font-weight:300;font-size:.82rem;color:var(--light);vertical-align:top;}
+.review-table tr:hover td{background:rgba(255,255,255,.02);}
+.review-stars-sm{color:var(--gold);font-size:.8rem;letter-spacing:.1em;}
+.review-approved{background:rgba(34,197,94,.1);color:var(--success);font-size:.65rem;padding:.2rem .6rem;border:1px solid rgba(34,197,94,.2);white-space:nowrap;}
+.review-pending{background:rgba(245,158,11,.1);color:var(--warning);font-size:.65rem;padding:.2rem .6rem;border:1px solid rgba(245,158,11,.2);white-space:nowrap;}
+.tbl-actions{display:flex;gap:.4rem;}
+.tbl-btn{background:none;border:1px solid var(--border);color:var(--light);font-size:.65rem;letter-spacing:.1em;padding:.3rem .7rem;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.tbl-btn:hover{border-color:var(--border2);color:var(--white);}
+.tbl-btn.del{border-color:rgba(239,68,68,.2);color:rgba(239,68,68,.6);}
+.tbl-btn.del:hover{border-color:#ef4444;color:#ef4444;}
+
+/* Analytics */
+.analytics-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:2rem;}
+.analytics-chart-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+
+/* Shared */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;}
+.section-h{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.2em;color:var(--white);}
+.section-sub{font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;color:var(--light);margin-top:.2rem;}
+.action-row{display:flex;gap:.8rem;align-items:center;}
+.search-input{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--white);font-family:'Inter',sans-serif;font-size:.82rem;
+  padding:.5rem 1rem;outline:none;width:220px;transition:border-color .3s;
+}
+.search-input:focus{border-color:var(--gold);}
+.search-input::placeholder{color:var(--mid);}
+
+svg.donut{width:120px;height:120px;}
+
+/* mini line chart */
+.sparkline{width:100%;height:60px;}
+
+@media(max-width:900px){
+  .login-left{display:none;}
+  .login-right{width:100%;}
+  .kpi-grid,.chart-grid,.recent-grid,.analytics-kpi,.analytics-chart-row{grid-template-columns:1fr;}
+  .gallery-manager-grid{grid-template-columns:repeat(2,1fr);}
+  .upload-form-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-left">
+    <div class="login-left-content">
+      <div class="login-logo-big">ONE<br>TATTOO<br>ARTS</div>
+      <p class="login-tagline">Admin Portal</p>
+      <div class="login-art">
+        <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=400&q=80" alt="Studio"/>
+      </div>
+    </div>
+  </div>
+  <div class="login-right">
+    <h1 class="login-title">ADMIN<br>LOGIN</h1>
+    <p class="login-sub">Sign in to access the studio dashboard</p>
+    <label class="login-label">Email Address</label>
+    <input class="login-input" type="email" placeholder="admin@onetattooarts.com"/>
+    <label class="login-label">Password</label>
+    <input class="login-input" type="password" placeholder="••••••••••"/>
+    <button class="login-btn" onclick="showDashboard()">SIGN IN TO DASHBOARD</button>
+    <p class="login-note">UI Demo — No authentication active yet<br/>Click to enter dashboard</p>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="dashboard" id="dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-main">ONE TATTOO</div>
+      <div class="sidebar-logo-sub">Admin Dashboard</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Overview</div>
+      <a class="nav-item active" onclick="showPanel('overview',this)">
+        <span class="nav-icon">◈</span> Dashboard
+      </a>
+      <a class="nav-item" onclick="showPanel('bookings',this)">
+        <span class="nav-icon">📅</span> Bookings <span class="nav-badge">12</span>
+      </a>
+      <div class="nav-section-title" style="margin-top:1rem;">Content</div>
+      <a class="nav-item" onclick="showPanel('upload',this)">
+        <span class="nav-icon">↑</span> Upload Media
+      </a>
+      <a class="nav-item" onclick="showPanel('gallery',this)">
+        <span class="nav-icon">◫</span> Gallery Manager
+      </a>
+      <a class="nav-item" onclick="showPanel('reviews',this)">
+        <span class="nav-icon">★</span> Reviews <span class="nav-badge">3</span>
+      </a>
+      <div class="nav-section-title" style="margin-top:1rem;">Reports</div>
+      <a class="nav-item" onclick="showPanel('analytics',this)">
+        <span class="nav-icon">↗</span> Analytics
+      </a>
+      <div class="nav-section-title" style="margin-top:1rem;">Studio</div>
+      <a class="nav-item" onclick="showPanel('artists',this)">
+        <span class="nav-icon">✦</span> Artists
+      </a>
+      <a class="nav-item" href="index.html" target="_blank">
+        <span class="nav-icon">⬡</span> View Website ↗
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">AN</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">Alex Noir</div>
+          <div class="sidebar-user-role">Studio Admin</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="showLogin()">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-content">
+    <div class="topbar" id="topbar">
+      <div>
+        <div class="topbar-title" id="topbarTitle">DASHBOARD</div>
+        <div class="topbar-sub" id="topbarSub">Welcome back, Alex. Here's what's happening today.</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="topbar-btn" onclick="showPanel('upload',null)">+ Upload</button>
+        <button class="topbar-btn primary" onclick="showPanel('bookings',null)">View Bookings</button>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- OVERVIEW PANEL -->
+      <div class="panel active" id="panel-overview">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Total Revenue (MTD)</div>
+            <div class="kpi-value">₹4.2L</div>
+            <div class="kpi-change up">▲ 18% from last month</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Sessions Booked</div>
+            <div class="kpi-value">87</div>
+            <div class="kpi-change up">▲ 12 new this week</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Pending Approvals</div>
+            <div class="kpi-value">15</div>
+            <div class="kpi-change down">▼ 3 pending review</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Avg. Rating</div>
+            <div class="kpi-value">4.9★</div>
+            <div class="kpi-change up">▲ 6 new reviews</div>
+          </div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-box">
+            <div class="chart-title">Monthly Bookings</div>
+            <div class="chart-desc">Last 12 months — sessions booked per month</div>
+            <div class="chart-area" id="barChart">
+              <!-- Bars generated by JS -->
+            </div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-title">Style Distribution</div>
+            <div class="chart-desc">This quarter</div>
+            <div class="donut-wrap">
+              <svg class="donut" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#1a1a1a" stroke-width="18"/>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#8b1c1c" stroke-width="18" stroke-dasharray="75 175" stroke-dashoffset="25" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#c9a96e" stroke-width="18" stroke-dasharray="40 210" stroke-dashoffset="-50" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#3a3a3a" stroke-width="18" stroke-dasharray="30 220" stroke-dashoffset="-90" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#562020" stroke-width="18" stroke-dasharray="55 195" stroke-dashoffset="-120" transform="rotate(-90 50 50)"/>
+              </svg>
+            </div>
+            <div class="donut-legend">
+              <div class="donut-item"><span class="donut-dot" style="background:#8b1c1c"></span><span class="donut-name">Blackwork</span><span class="donut-pct">30%</span></div>
+              <div class="donut-item"><span class="donut-dot" style="background:#c9a96e"></span><span class="donut-name">Fine Line</span><span class="donut-pct">22%</span></div>
+              <div class="donut-item"><span class="donut-dot" style="background:#3a3a3a"></span><span class="donut-name">Geometric</span><span class="donut-pct">19%</span></div>
+              <div class="donut-item"><span class="donut-dot" style="background:#562020"></span><span class="donut-name">Realism</span><span class="donut-pct">29%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="recent-grid">
+          <div class="recent-box">
+            <div class="recent-title">Recent Bookings</div>
+            <div class="booking-item">
+              <div class="booking-avatar">PS</div>
+              <div><div class="booking-name">Priya Sharma</div><div class="booking-meta">Blackwork Sleeve · Alex Noir · Apr 12</div></div>
+              <span class="booking-status confirmed">Confirmed</span>
+            </div>
+            <div class="booking-item">
+              <div class="booking-avatar">RM</div>
+              <div><div class="booking-name">Rohan Mehta</div><div class="booking-meta">Realism Portrait · Maya Cross · Apr 15</div></div>
+              <span class="booking-status confirmed">Confirmed</span>
+            </div>
+            <div class="booking-item">
+              <div class="booking-avatar">AD</div>
+              <div><div class="booking-name">Anika Desai</div><div class="booking-meta">Minimal Wrist · Alex Noir · Apr 18</div></div>
+              <span class="booking-status pending">Pending</span>
+            </div>
+            <div class="booking-item">
+              <div class="booking-avatar">VK</div>
+              <div><div class="booking-name">Vikram Kumar</div><div class="booking-meta">Japanese Full Back · Kai Storm · Apr 20</div></div>
+              <span class="booking-status pending">Pending</span>
+            </div>
+            <div class="booking-item">
+              <div class="booking-avatar">MN</div>
+              <div><div class="booking-name">Meera Nair</div><div class="booking-meta">Anime Color · Zara Ink · Mar 30</div></div>
+              <span class="booking-status completed">Completed</span>
+            </div>
+          </div>
+          <div class="recent-box">
+            <div class="recent-title">Revenue Trend</div>
+            <svg class="sparkline" viewBox="0 0 300 60" preserveAspectRatio="none">
+              <defs><linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8b1c1c" stop-opacity=".4"/><stop offset="100%" stop-color="#8b1c1c" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,50 L30,42 L60,35 L90,38 L120,28 L150,20 L180,25 L210,15 L240,10 L270,8 L300,5 L300,60 L0,60Z" fill="url(#lineGrad)"/>
+              <path d="M0,50 L30,42 L60,35 L90,38 L120,28 L150,20 L180,25 L210,15 L240,10 L270,8 L300,5" fill="none" stroke="#8b1c1c" stroke-width="2"/>
+            </svg>
+            <div style="margin-top:1.5rem;">
+              <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);">
+                <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;color:var(--light);">January</span>
+                <span style="font-family:'Inter',sans-serif;font-weight:400;font-size:.78rem;color:var(--white);">₹2,18,000</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);">
+                <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;color:var(--light);">February</span>
+                <span style="font-family:'Inter',sans-serif;font-weight:400;font-size:.78rem;color:var(--white);">₹2,85,000</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);">
+                <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;color:var(--light);">March</span>
+                <span style="font-family:'Inter',sans-serif;font-weight:400;font-size:.78rem;color:var(--white);">₹3,62,000</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:.6rem 0;">
+                <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;color:var(--light);">April (MTD)</span>
+                <span style="font-family:'Inter',sans-serif;font-weight:500;font-size:.78rem;color:var(--gold);">₹4,20,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKINGS PANEL -->
+      <div class="panel" id="panel-bookings">
+        <div class="section-header">
+          <div>
+            <div class="section-h">BOOKINGS</div>
+            <div class="section-sub">87 sessions booked · 15 pending confirmation</div>
+          </div>
+          <div class="action-row">
+            <input class="search-input" placeholder="Search by name or artist..."/>
+            <button class="topbar-btn">Export CSV</button>
+            <button class="topbar-btn primary">+ New Booking</button>
+          </div>
+        </div>
+        <table class="review-table">
+          <thead><tr>
+            <th>Client</th><th>Style</th><th>Artist</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+            <tr><td><b style="color:var(--white)">Priya Sharma</b><br>priya@email.com</td><td>Blackwork Sleeve</td><td>Alex Noir</td><td>Apr 12, 2026</td><td>₹45,000</td><td><span class="review-approved">Confirmed</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Cancel</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Rohan Mehta</b><br>rohan@email.com</td><td>Realism Portrait</td><td>Maya Cross</td><td>Apr 15, 2026</td><td>₹22,000</td><td><span class="review-approved">Confirmed</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Cancel</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Anika Desai</b><br>anika@email.com</td><td>Minimal Wrist</td><td>Alex Noir</td><td>Apr 18, 2026</td><td>₹5,500</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Confirm</button><button class="tbl-btn del">Cancel</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Vikram Kumar</b><br>vikram@email.com</td><td>Japanese Full Back</td><td>Kai Storm</td><td>Apr 20, 2026</td><td>₹75,000</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Confirm</button><button class="tbl-btn del">Cancel</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Meera Nair</b><br>meera@email.com</td><td>Anime Full Color</td><td>Zara Ink</td><td>Mar 30, 2026</td><td>₹18,000</td><td><span class="booking-status completed" style="font-size:.65rem;padding:.2rem .6rem;">Completed</span></td><td><div class="tbl-actions"><button class="tbl-btn">View</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- UPLOAD PANEL -->
+      <div class="panel" id="panel-upload">
+        <div class="section-header">
+          <div>
+            <div class="section-h">UPLOAD MEDIA</div>
+            <div class="section-sub">Add new tattoo images or videos to the gallery</div>
+          </div>
+        </div>
+        <div class="upload-zone" onclick="alert('File upload — backend integration pending')">
+          <div class="upload-icon">⬆</div>
+          <div class="upload-text">Drag & drop files here, or click to browse</div>
+          <div class="upload-subtext">Supports JPG, PNG, MP4, MOV · Max 50MB per file</div>
+        </div>
+        <div class="upload-form-grid">
+          <div class="form-group">
+            <label class="form-label">Title / Alt Text</label>
+            <input class="form-input" placeholder="E.g. Geometric mandala sleeve — Alex Noir"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tattoo Style / Category</label>
+            <select class="form-select">
+              <option>Minimal</option><option>Geometric</option><option>Realism</option>
+              <option>Blackwork</option><option>Japanese</option><option>Fine Line</option>
+              <option>Tribal</option><option>Anime / Watercolor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Artist</label>
+            <select class="form-select">
+              <option>Alex Noir</option><option>Maya Cross</option>
+              <option>Kai Storm</option><option>Zara Ink</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Visibility</label>
+            <select class="form-select">
+              <option>Public — Show on website</option>
+              <option>Private — Internal only</option>
+              <option>Featured — Homepage gallery</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column:span 2;">
+            <label class="form-label">Description / Notes</label>
+            <input class="form-input" placeholder="Optional description for internal reference..."/>
+          </div>
+        </div>
+        <button class="topbar-btn primary" onclick="alert('Upload submitted — backend integration pending')">UPLOAD TO GALLERY</button>
+      </div>
+
+      <!-- GALLERY MANAGER PANEL -->
+      <div class="panel" id="panel-gallery">
+        <div class="section-header">
+          <div>
+            <div class="section-h">GALLERY MANAGER</div>
+            <div class="section-sub">18 items shown · 4,200+ total works</div>
+          </div>
+          <div class="action-row">
+            <select class="form-select" style="width:160px;padding:.4rem .8rem;">
+              <option>All Styles</option><option>Minimal</option><option>Geometric</option>
+              <option>Realism</option><option>Blackwork</option>
+            </select>
+            <button class="topbar-btn primary" onclick="showPanel('upload',null)">+ Upload New</button>
+          </div>
+        </div>
+        <div class="gallery-manager-grid">
+          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1554774853-719586f82d77?w=300&q=80" alt=""/><span class="gm-tag">Realism</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
+          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=300&q=80" alt=""/><span class="gm-tag">Minimal</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
+          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=300&q=80" alt=""/><span class="gm-tag">Geometric</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
+          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=300&q=80" alt=""/><span class="gm-tag">Blackwork</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
+          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=300&q=80" alt=""/><span class="gm-tag">Anime</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
+          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=300&q=80" alt=""/><span class="gm-tag">Fine Line</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
+          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=300&q=80" alt=""/><span class="gm-tag">Tribal</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
+          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=300&q=80" alt=""/><span class="gm-tag">Realism</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
+        </div>
+      </div>
+
+      <!-- REVIEWS PANEL -->
+      <div class="panel" id="panel-reviews">
+        <div class="section-header">
+          <div>
+            <div class="section-h">REVIEWS MANAGER</div>
+            <div class="section-sub">3 pending approval · 42 published · Avg 4.9★</div>
+          </div>
+          <div class="action-row">
+            <select class="form-select" style="width:180px;padding:.4rem .8rem;">
+              <option>All Reviews</option><option>Pending</option><option>Published</option>
+            </select>
+          </div>
+        </div>
+        <table class="review-table">
+          <thead><tr>
+            <th>Author</th><th>Stars</th><th>Review</th><th>Tattoo</th><th>Date</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+            <tr><td><b style="color:var(--white)">Priya Sharma</b></td><td><span class="review-stars-sm">★★★★★</span></td><td style="max-width:200px;font-size:.78rem;">"The most extraordinary tattoo experience of my life..."</td><td>Blackwork Sleeve</td><td>Mar 2026</td><td><span class="review-approved">Published</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Remove</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Rohan Mehta</b></td><td><span class="review-stars-sm">★★★★★</span></td><td style="max-width:200px;font-size:.78rem;">"Maya did my portrait tattoo and I cannot stop staring..."</td><td>Realism Portrait</td><td>Feb 2026</td><td><span class="review-approved">Published</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Remove</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Arjun Kapoor</b></td><td><span class="review-stars-sm">★★★★★</span></td><td style="max-width:200px;font-size:.78rem;">"Zara created an anime tattoo that makes everyone stop..."</td><td>Anime Color</td><td>Apr 2026</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Approve</button><button class="tbl-btn del">Reject</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Sneha Joshi</b></td><td><span class="review-stars-sm">★★★★☆</span></td><td style="max-width:200px;font-size:.78rem;">"Amazing studio, wonderful team, slight wait time..."</td><td>Minimal Wrist</td><td>Apr 2026</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Approve</button><button class="tbl-btn del">Reject</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ANALYTICS PANEL -->
+      <div class="panel" id="panel-analytics">
+        <div class="section-header">
+          <div>
+            <div class="section-h">ANALYTICS</div>
+            <div class="section-sub">April 2026 · Compared to March 2026</div>
+          </div>
+          <div class="action-row">
+            <select class="form-select" style="width:160px;padding:.4rem .8rem;">
+              <option>This Month</option><option>Last 3 Months</option><option>Last Year</option>
+            </select>
+          </div>
+        </div>
+        <div class="analytics-kpi">
+          <div class="kpi-card">
+            <div class="kpi-label">Website Visitors</div>
+            <div class="kpi-value">12,840</div>
+            <div class="kpi-change up">▲ 23% MoM</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Consultation Requests</div>
+            <div class="kpi-value">342</div>
+            <div class="kpi-change up">▲ 11% MoM</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Conversion Rate</div>
+            <div class="kpi-value">2.7%</div>
+            <div class="kpi-change up">▲ 0.4% MoM</div>
+          </div>
+        </div>
+        <div class="analytics-chart-row">
+          <div class="chart-box">
+            <div class="chart-title">Sessions Per Month — 2026</div>
+            <div class="chart-desc">Tattoo sessions completed monthly</div>
+            <div class="chart-area" id="analyticsBar"></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-title">Traffic Sources</div>
+            <div class="chart-desc">Where visitors come from</div>
+            <div style="margin-top:1rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--border);">
+                <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:.8rem;color:var(--light);">Google Search</span>
+                <div style="display:flex;align-items:center;gap:.8rem;"><div style="width:80px;height:4px;background:var(--grey4);position:relative;"><div style="position:absolute;left:0;top:0;height:100%;width:65%;background:var(--red);"></div></div><span style="font-size:.78rem;color:var(--white);font-weight:400;width:30px;text-align:right;">65%</span></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--border);">
+                <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:.8rem;color:var(--light);">Instagram</span>
+                <div style="display:flex;align-items:center;gap:.8rem;"><div style="width:80px;height:4px;background:var(--grey4);position:relative;"><div style="position:absolute;left:0;top:0;height:100%;width:20%;background:var(--gold);"></div></div><span style="font-size:.78rem;color:var(--white);font-weight:400;width:30px;text-align:right;">20%</span></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--border);">
+                <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:.8rem;color:var(--light);">Direct / Word of Mouth</span>
+                <div style="display:flex;align-items:center;gap:.8rem;"><div style="width:80px;height:4px;background:var(--grey4);position:relative;"><div style="position:absolute;left:0;top:0;height:100%;width:10%;background:var(--mid);"></div></div><span style="font-size:.78rem;color:var(--white);font-weight:400;width:30px;text-align:right;">10%</span></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;">
+                <span style="font-family:'Inter',sans-serif;font-weight:300;font-size:.8rem;color:var(--light);">Other</span>
+                <div style="display:flex;align-items:center;gap:.8rem;"><div style="width:80px;height:4px;background:var(--grey4);position:relative;"><div style="position:absolute;left:0;top:0;height:100%;width:5%;background:#444;"></div></div><span style="font-size:.78rem;color:var(--white);font-weight:400;width:30px;text-align:right;">5%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARTISTS PANEL -->
+      <div class="panel" id="panel-artists">
+        <div class="section-header">
+          <div>
+            <div class="section-h">ARTISTS</div>
+            <div class="section-sub">4 active artists · Manage profiles and bookings</div>
+          </div>
+          <button class="topbar-btn primary">+ Add Artist</button>
+        </div>
+        <table class="review-table">
+          <thead><tr><th>Artist</th><th>Specialty</th><th>Sessions (MTD)</th><th>Revenue (MTD)</th><th>Avg Rating</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><b style="color:var(--white)">Alex Noir</b><br>Lead Artist</td><td>Blackwork · Geometric</td><td>28</td><td>₹1,42,000</td><td><span class="review-stars-sm">★ 5.0</span></td><td><span class="review-approved">Active</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit Profile</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Maya Cross</b><br>Senior Artist</td><td>Fine Line · Realism</td><td>22</td><td>₹1,05,000</td><td><span class="review-stars-sm">★ 4.9</span></td><td><span class="review-approved">Active</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit Profile</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Kai Storm</b><br>Senior Artist</td><td>Japanese · Tribal</td><td>20</td><td>₹98,000</td><td><span class="review-stars-sm">★ 4.9</span></td><td><span class="review-approved">Active</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit Profile</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Zara Ink</b><br>Artist</td><td>Anime · Watercolor</td><td>17</td><td>₹72,000</td><td><span class="review-stars-sm">★ 4.8</span></td><td><span class="review-approved">Active</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit Profile</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /page-content -->
+  </div><!-- /main-content -->
+</div><!-- /dashboard -->
+
+<script>
+const cursor=document.getElementById('cursor');
+document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';});
+
+function showDashboard(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('dashboard').style.display='flex';
+  buildCharts();
+}
+function showLogin(){
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+}
+
+const panelMeta={
+  overview:{title:'DASHBOARD',sub:'Welcome back, Alex. Here\'s what\'s happening today.'},
+  bookings:{title:'BOOKINGS',sub:'87 sessions booked this month · 15 pending confirmation'},
+  upload:{title:'UPLOAD MEDIA',sub:'Add new content to the gallery'},
+  gallery:{title:'GALLERY MANAGER',sub:'Manage, edit, and organise your portfolio'},
+  reviews:{title:'REVIEWS MANAGER',sub:'Approve and manage client reviews'},
+  analytics:{title:'ANALYTICS',sub:'April 2026 · Performance overview'},
+  artists:{title:'ARTISTS',sub:'Manage artist profiles and availability'}
+};
+
+function showPanel(id, navEl){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const el=document.getElementById('panel-'+id);
+  if(el)el.classList.add('active');
+  if(navEl){
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    navEl.classList.add('active');
+  }
+  const meta=panelMeta[id];
+  if(meta){
+    document.getElementById('topbarTitle').textContent=meta.title;
+    document.getElementById('topbarSub').textContent=meta.sub;
+  }
+}
+
+function buildCharts(){
+  const months=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const vals=[52,48,67,87,0,0,0,0,0,0,0,0];
+  const max=Math.max(...vals.filter(v=>v>0));
+  const charts=['barChart','analyticsBar'];
+  charts.forEach(id=>{
+    const c=document.getElementById(id);
+    if(!c)return;
+    c.innerHTML='';
+    months.forEach((m,i)=>{
+      const bar=document.createElement('div');
+      bar.className='chart-bar';
+      const fill=document.createElement('div');
+      fill.className='bar-fill';
+      fill.style.height=vals[i]?((vals[i]/max)*100)+'%':'12px';
+      if(!vals[i])fill.style.background='var(--grey4)';
+      const label=document.createElement('div');
+      label.className='bar-label';
+      label.textContent=m;
+      bar.appendChild(fill);
+      bar.appendChild(label);
+      c.appendChild(bar);
+    });
+    setTimeout(()=>{
+      c.querySelectorAll('.bar-fill').forEach(b=>{const h=b.style.height;b.style.height='0';setTimeout(()=>b.style.height=h,50);});
+    },100);
+  });
+}
+</script>
+</body>
+</html>

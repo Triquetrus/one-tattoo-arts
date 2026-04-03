@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gallery — One Tattoo Arts</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --black:#050505;--white:#f0ebe3;--red:#8b1c1c;--gold:#c9a96e;
+  --grey:#0f0f0f;--grey2:#161616;--mid:#3a3a3a;--light:#9a9088;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'Inter',sans-serif;cursor:none;overflow-x:hidden;}
+.cursor{position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+.cursor-ring{position:fixed;width:40px;height:40px;border:1px solid rgba(240,235,227,0.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .15s ease;}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.2rem 5rem;background:rgba(5,5,5,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1;}
+.logo-main{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.4em;color:var(--white);}
+.logo-sub{font-family:'Playfair Display',serif;font-style:italic;font-size:.72rem;letter-spacing:.3em;color:var(--light);}
+.nav-links{display:flex;gap:2.8rem;list-style:none;}
+.nav-links a{font-family:'Inter',sans-serif;font-weight:300;font-size:.82rem;letter-spacing:.15em;text-transform:uppercase;color:var(--light);text-decoration:none;transition:color .3s;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+.nav-cta{font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:.3em;border:1px solid rgba(255,255,255,.5);color:var(--white);padding:.7rem 2rem;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;}
+.nav-cta::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .4s ease;}
+.nav-cta:hover::before{transform:translateX(0);}
+.nav-cta:hover{border-color:var(--gold);color:var(--black);}
+.nav-cta span{position:relative;z-index:1;}
+
+.gallery-hero{padding:10rem 5rem 4rem;text-align:center;}
+.section-label{font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;letter-spacing:.3em;color:var(--gold);display:block;margin-bottom:.6rem;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,12vw,10rem);letter-spacing:.06em;color:var(--white);line-height:.9;}
+.hero-sub{font-family:'Inter',sans-serif;font-weight:300;font-size:.9rem;letter-spacing:.15em;text-transform:uppercase;color:var(--light);margin-top:1.5rem;}
+
+.filter-bar{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;padding:0 5rem 4rem;}
+.filter-btn{font-family:'Inter',sans-serif;font-weight:300;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(255,255,255,.12);color:var(--light);background:none;padding:.6rem 1.6rem;cursor:pointer;transition:all .3s;}
+.filter-btn:hover{border-color:var(--border2);color:var(--white);}
+.filter-btn.active{border-color:var(--gold);color:var(--gold);}
+
+.gallery-masonry{columns:3;gap:5px;padding:0 5rem 8rem;}
+.gallery-item{break-inside:avoid;margin-bottom:5px;position:relative;overflow:hidden;cursor:pointer;}
+.gallery-item.hidden{display:none;}
+.g-media{width:100%;display:block;filter:grayscale(65%);transition:filter .6s,transform .6s;}
+.gallery-item:hover .g-media{filter:grayscale(0%);transform:scale(1.04);}
+.g-overlay{position:absolute;inset:0;background:rgba(5,5,5,0);transition:background .4s;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;}
+.gallery-item:hover .g-overlay{background:rgba(5,5,5,.55);}
+.g-tag{font-family:'Inter',sans-serif;font-weight:400;font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:white;opacity:0;transition:opacity .4s;background:var(--red);padding:.25rem .8rem;}
+.gallery-item:hover .g-tag{opacity:1;}
+.g-view{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.25em;color:white;opacity:0;transition:opacity .4s;}
+.gallery-item:hover .g-view{opacity:1;}
+.vid-badge{position:absolute;top:.8rem;left:.8rem;background:rgba(5,5,5,.8);border:1px solid rgba(255,255,255,.15);font-family:'Inter',sans-serif;font-weight:300;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--light);padding:.2rem .6rem;z-index:2;}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:2000;display:none;align-items:center;justify-content:center;padding:2rem;}
+.modal.open{display:flex;animation:fadeIn .3s ease;}
+.modal-inner{position:relative;max-width:900px;width:100%;max-height:92vh;}
+.modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.modal-cat{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;letter-spacing:.2em;color:var(--gold);}
+.modal-close{background:none;border:1px solid rgba(255,255,255,.15);color:var(--white);cursor:pointer;font-family:'Inter',sans-serif;font-weight:300;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:.5rem 1.2rem;transition:all .3s;}
+.modal-close:hover{border-color:var(--white);}
+.modal img{width:100%;max-height:80vh;object-fit:contain;display:block;}
+.modal-bottom{padding:1rem 0 0;display:flex;justify-content:space-between;align-items:center;}
+.modal-info{font-family:'Inter',sans-serif;font-weight:300;font-size:.8rem;letter-spacing:.1em;color:var(--mid);}
+.modal-nav{display:flex;gap:.5rem;}
+.modal-nav button{background:none;border:1px solid rgba(255,255,255,.15);color:var(--white);font-family:'Inter',sans-serif;font-weight:300;font-size:.75rem;letter-spacing:.15em;padding:.5rem 1.2rem;cursor:pointer;transition:all .3s;}
+.modal-nav button:hover{border-color:var(--gold);color:var(--gold);}
+
+.wa-btn{position:fixed;bottom:2.5rem;right:2.5rem;width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.3);transition:transform .3s;z-index:500;}
+.wa-btn:hover{transform:scale(1.1);}
+.wa-btn svg{width:26px;height:26px;fill:white;}
+
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+footer{background:var(--black);border-top:1px solid var(--border);padding:2.5rem 5rem;display:flex;justify-content:space-between;align-items:center;}
+.f-copy{font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;color:var(--mid);letter-spacing:.1em;}
+.f-back{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.3em;color:var(--white);text-decoration:none;transition:color .3s;}
+.f-back:hover{color:var(--gold);}
+
+@media(max-width:900px){
+  nav{padding:1rem 2rem;}.nav-links{display:none;}
+  .gallery-hero{padding:8rem 2rem 3rem;}.filter-bar{padding:0 2rem 3rem;}
+  .gallery-masonry{columns:2;padding:0 2rem 5rem;}
+  footer{padding:2rem;flex-direction:column;gap:1rem;text-align:center;}
+}
+@media(max-width:500px){.gallery-masonry{columns:1;}}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="logo"><span class="logo-main">ONE TATTOO</span><span class="logo-sub">Arts Studio</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#categories">Styles</a></li>
+    <li><a href="index.html#artists">Artists</a></li>
+    <li><a href="gallery.html" class="active">Gallery</a></li>
+    <li><a href="index.html#faq">FAQ</a></li>
+    <li><a href="index.html#location">Location</a></li>
+  </ul>
+  <a href="appointment.html" class="nav-cta"><span>Book Now</span></a>
+</nav>
+
+<div class="gallery-hero reveal">
+  <span class="section-label">Our Portfolio</span>
+  <h1 class="hero-title">GALLERY</h1>
+  <p class="hero-sub">4,200+ works completed · Filtered by style</p>
+</div>
+
+<div class="filter-bar reveal">
+  <button class="filter-btn active" data-filter="all">All Works</button>
+  <button class="filter-btn" data-filter="minimal">Minimal</button>
+  <button class="filter-btn" data-filter="geometric">Geometric</button>
+  <button class="filter-btn" data-filter="realism">Realism</button>
+  <button class="filter-btn" data-filter="blackwork">Blackwork</button>
+  <button class="filter-btn" data-filter="japanese">Japanese</button>
+  <button class="filter-btn" data-filter="fineline">Fine Line</button>
+  <button class="filter-btn" data-filter="tribal">Tribal</button>
+  <button class="filter-btn" data-filter="anime">Anime</button>
+</div>
+
+<div class="gallery-masonry" id="galleryGrid">
+  <div class="gallery-item" data-cat="realism" onclick="openModal(0)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1554774853-719586f82d77?w=700&q=85" alt="Realism"/>
+    <div class="g-overlay"><span class="g-tag">Realism</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="minimal" onclick="openModal(1)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=700&q=85" alt="Minimal"/>
+    <div class="g-overlay"><span class="g-tag">Minimal</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="geometric" onclick="openModal(2)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=700&q=85" alt="Geometric"/>
+    <div class="g-overlay"><span class="g-tag">Geometric</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="blackwork" onclick="openModal(3)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=700&q=85" alt="Blackwork"/>
+    <div class="g-overlay"><span class="g-tag">Blackwork</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="anime" onclick="openModal(4)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=700&q=85" alt="Anime"/>
+    <div class="g-overlay"><span class="g-tag">Anime</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="fineline" onclick="openModal(5)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=700&q=85" alt="Fine Line"/>
+    <div class="g-overlay"><span class="g-tag">Fine Line</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="tribal" onclick="openModal(6)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=700&q=85" alt="Tribal"/>
+    <div class="g-overlay"><span class="g-tag">Tribal</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="realism" onclick="openModal(7)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=85" alt="Realism"/>
+    <div class="g-overlay"><span class="g-tag">Realism</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="geometric" onclick="openModal(8)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=700&q=85" alt="Geometric"/>
+    <div class="g-overlay"><span class="g-tag">Geometric</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="japanese" onclick="openModal(9)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=700&q=85" alt="Japanese"/>
+    <div class="g-overlay"><span class="g-tag">Japanese</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="minimal" onclick="openModal(10)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=85" alt="Minimal"/>
+    <div class="g-overlay"><span class="g-tag">Minimal</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="fineline" onclick="openModal(11)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=700&q=85" alt="Fine Line"/>
+    <div class="g-overlay"><span class="g-tag">Fine Line</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="blackwork" onclick="openModal(12)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1554774853-719586f82d77?w=400&q=80&crop=top" alt="Blackwork"/>
+    <div class="g-overlay"><span class="g-tag">Blackwork</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="anime" onclick="openModal(13)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=400&q=80&crop=entropy" alt="Anime"/>
+    <div class="g-overlay"><span class="g-tag">Anime</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="tribal" onclick="openModal(14)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=400&q=80&crop=entropy" alt="Tribal"/>
+    <div class="g-overlay"><span class="g-tag">Tribal</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="realism" onclick="openModal(15)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=400&q=85&crop=top" alt="Realism"/>
+    <div class="g-overlay"><span class="g-tag">Realism</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="japanese" onclick="openModal(16)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=400&q=80" alt="Japanese"/>
+    <div class="g-overlay"><span class="g-tag">Japanese</span><span class="g-view">VIEW</span></div>
+  </div>
+  <div class="gallery-item" data-cat="minimal" onclick="openModal(17)">
+    <img class="g-media" src="https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=400&q=80" alt="Minimal"/>
+    <div class="g-overlay"><span class="g-tag">Minimal</span><span class="g-view">VIEW</span></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal-inner">
+    <div class="modal-top">
+      <span class="modal-cat" id="modalCat">—</span>
+      <button class="modal-close" onclick="closeModal()">× Close</button>
+    </div>
+    <img id="modalImg" src="" alt=""/>
+    <div class="modal-bottom">
+      <span class="modal-info">One Tattoo Arts Studio, Pune</span>
+      <div class="modal-nav">
+        <button onclick="prevImg()">← Prev</button>
+        <button onclick="nextImg()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="index.html" class="f-back">← ONE TATTOO ARTS</a>
+  <p class="f-copy">© 2026 One Tattoo Arts. All rights reserved.</p>
+</footer>
+
+<a href="https://wa.me/912012345678" target="_blank" class="wa-btn">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';setTimeout(()=>{ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px';},80);});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const f=btn.dataset.filter;
+    document.querySelectorAll('.gallery-item').forEach(item=>item.classList.toggle('hidden',f!=='all'&&item.dataset.cat!==f));
+  });
+});
+
+const items=document.querySelectorAll('.gallery-item');
+let cur=0;
+const imgs=[
+  {src:'https://images.unsplash.com/photo-1554774853-719586f82d77?w=900&q=90',cat:'Realism'},
+  {src:'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=900&q=90',cat:'Minimal'},
+  {src:'https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=900&q=90',cat:'Geometric'},
+  {src:'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=900&q=90',cat:'Blackwork'},
+  {src:'https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=900&q=90',cat:'Anime'},
+  {src:'https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=900&q=90',cat:'Fine Line'},
+  {src:'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=900&q=90',cat:'Tribal'},
+  {src:'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=900&q=90',cat:'Realism'},
+  {src:'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=900&q=90',cat:'Geometric'},
+  {src:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=90',cat:'Japanese'},
+  {src:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&q=90',cat:'Minimal'},
+  {src:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&q=90',cat:'Fine Line'},
+];
+function openModal(idx){
+  cur=idx%imgs.length;
+  document.getElementById('modalImg').src=imgs[cur].src;
+  document.getElementById('modalCat').textContent=imgs[cur].cat;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function closeModalOutside(e){if(e.target===document.getElementById('modal'))closeModal();}
+function nextImg(){cur=(cur+1)%imgs.length;openModal(cur);}
+function prevImg(){cur=(cur-1+imgs.length)%imgs.length;openModal(cur);}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='ArrowRight')nextImg();if(e.key==='ArrowLeft')prevImg();});
+</script>
+</body>
+</html>
