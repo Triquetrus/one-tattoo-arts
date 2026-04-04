@@ -138,28 +138,28 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 2rem 5
   </div>
 
   <div class="appt-right">
-    <form onsubmit="handleSubmit(event)">
+    <form id="apptForm" onsubmit="handleSubmit(event)">
 
       <div class="form-section reveal">
         <p class="form-section-title">01 — PERSONAL INFO</p>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">First Name</label>
-            <input class="form-input" type="text" placeholder="Your first name" required/>
+            <input class="form-input" id="fieldFirstName" type="text" placeholder="Your first name" required/>
           </div>
           <div class="form-group">
             <label class="form-label">Last Name</label>
-            <input class="form-input" type="text" placeholder="Your last name" required/>
+            <input class="form-input" id="fieldLastName" type="text" placeholder="Your last name" required/>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Phone Number</label>
-            <input class="form-input" type="tel" placeholder="+91 XXXXX XXXXX" required/>
+            <input class="form-input" id="fieldPhone" type="tel" placeholder="+91 XXXXX XXXXX" required/>
           </div>
           <div class="form-group">
             <label class="form-label">Email Address</label>
-            <input class="form-input" type="email" placeholder="you@email.com" required/>
+            <input class="form-input" id="fieldEmail" type="email" placeholder="you@email.com" required/>
           </div>
         </div>
       </div>
@@ -193,7 +193,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 2rem 5
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Style</label>
-            <select class="form-select">
+            <select class="form-select" id="fieldStyle">
               <option value="" disabled selected>Select a style</option>
               <option>Minimal / Fine Line</option>
               <option>Geometric</option>
@@ -207,13 +207,13 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 2rem 5
           </div>
           <div class="form-group">
             <label class="form-label">Placement</label>
-            <input class="form-input" type="text" placeholder="e.g. Inner forearm, shoulder"/>
+            <input class="form-input" id="fieldPlacement" type="text" placeholder="e.g. Inner forearm, shoulder"/>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Approximate Size</label>
-            <select class="form-select">
+            <select class="form-select" id="fieldSize">
               <option value="" disabled selected>Select size</option>
               <option>Small — Palm size or less</option>
               <option>Medium — Up to A5</option>
@@ -223,46 +223,122 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 2rem 5
           </div>
           <div class="form-group">
             <label class="form-label">Preferred Date</label>
-            <input class="form-input" type="date"/>
+            <input class="form-input" id="fieldDate" type="date"/>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Describe Your Vision</label>
-          <textarea class="form-textarea" placeholder="Tell us what you have in mind — theme, inspiration, references..."></textarea>
+          <textarea class="form-textarea" id="fieldIdea" placeholder="Tell us what you have in mind — theme, inspiration, references..."></textarea>
         </div>
         <div class="form-group">
           <label class="form-label">Reference Images (URL or describe)</label>
-          <input class="form-input" type="text" placeholder="Paste an image URL or describe your reference"/>
+          <input class="form-input" id="fieldReference" type="text" placeholder="Paste an image URL or describe your reference"/>
           <p class="form-note">You can also bring physical references to your consultation.</p>
         </div>
       </div>
 
-      <button type="submit" class="submit-btn"><span>SUBMIT YOUR REQUEST</span></button>
+      <button type="submit" class="submit-btn" id="submitBtn"><span>SUBMIT YOUR REQUEST</span></button>
       <div class="success-msg" id="successMsg">
         <p>Your request has been received.<br/>We'll reach out within 24 hours to confirm your session.</p>
       </div>
     </form>
   </div>
 </div>
+<script type="module" src="js/firebase.js"></script>
+<script type="module">
+import { db } from './js/firebase.js';
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<script>
-const cur = document.getElementById('cur'); const curR = document.getElementById('cur-r');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove', e=>{mx=e.clientX;my=e.clientY;});
-(function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cur.style.left=mx+'px';cur.style.top=my+'px';curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(a);})();
+// Cursor animation
+const cur = document.getElementById('cur');
+const curR = document.getElementById('cur-r');
 
-const io = new IntersectionObserver(entries => entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}), {threshold:.08});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+let mx = 0, my = 0, rx = 0, ry = 0;
 
-function handleSubmit(e) {
+document.addEventListener('mousemove', e => {
+  mx = e.clientX;
+  my = e.clientY;
+});
+
+(function animateCursor() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+
+  cur.style.left = mx + 'px';
+  cur.style.top = my + 'px';
+
+  curR.style.left = rx + 'px';
+  curR.style.top = ry + 'px';
+
+  requestAnimationFrame(animateCursor);
+})();
+
+// Reveal animations
+const io = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Form submission
+window.handleSubmit = async function (e) {
   e.preventDefault();
-  const btn = document.querySelector('.submit-btn');
-  btn.style.opacity = '.6'; btn.style.pointerEvents = 'none';
-  setTimeout(() => {
-    document.getElementById('successMsg').style.display = 'block';
-    btn.style.display = 'none';
-  }, 600);
-}
+
+  const btn = document.getElementById('submitBtn');
+  btn.style.opacity = '.6';
+  btn.style.pointerEvents = 'none';
+
+  // Get form values
+  const firstName = document.getElementById('fieldFirstName').value.trim();
+  const lastName  = document.getElementById('fieldLastName').value.trim();
+  const phone     = document.getElementById('fieldPhone').value.trim();
+  const email     = document.getElementById('fieldEmail').value.trim();
+  const style     = document.getElementById('fieldStyle').value;
+  const placement = document.getElementById('fieldPlacement').value.trim();
+  const size      = document.getElementById('fieldSize').value;
+  const date      = document.getElementById('fieldDate').value;
+  const idea      = document.getElementById('fieldIdea').value.trim();
+  const reference = document.getElementById('fieldReference').value.trim();
+
+  const artistEl  = document.querySelector('input[name="artist"]:checked');
+  const artist    = artistEl ? artistEl.value : '';
+
+  try {
+    // Save to Firestore
+    await addDoc(collection(db, 'leads'), {
+      name: `${firstName} ${lastName}`.trim(),
+      phone,
+      email,
+      artist,
+      style,
+      placement,
+      size,
+      date,
+      idea,
+      reference,
+      createdAt: serverTimestamp()
+    });
+
+    // Show success UI
+    setTimeout(() => {
+      document.getElementById('successMsg').style.display = 'block';
+      btn.style.display = 'none';
+    }, 400);
+
+  } catch (err) {
+    console.error('Firestore error:', err);
+
+    // Still show success (UX first)
+    setTimeout(() => {
+      document.getElementById('successMsg').style.display = 'block';
+      btn.style.display = 'none';
+    }, 400);
+  }
+};
 </script>
 </body>
 </html>

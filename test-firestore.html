@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Firestore Gallery Test</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    .asset {
+      margin-bottom: 20px;
+    }
+    video, img {
+      width: 480px;
+      height: 270px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Firestore Gallery Test</h1>
+  <div id="gallery">
+    <video controls muted preload="metadata" playsinline crossorigin="anonymous">
+  <source src="https://res.cloudinary.com/dc2e14v5j/video/upload/f_auto,q_auto/VID-20260404-WA0210_uakymt.mp4" type="video/mp4">
+</video>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    // 1️⃣ Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCE-KTvHu_bfn8RD6U_bnX8Qrnl-nIkCew",
+      authDomain: "onetattooart-29e85.firebaseapp.com",
+      projectId: "onetattooart-29e85",
+      storageBucket: "onetattooart-29e85.firebasestorage.app",
+      messagingSenderId: "1001410733981",
+      appId: "1:1001410733981:web:35b6c391ba97d3a823f174"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 2️⃣ Fetch Firestore collection
+    async function fetchGallery() {
+      const galleryDiv = document.getElementById("gallery");
+      const snapshot = await getDocs(collection(db, "gallery_assets"));
+
+      snapshot.forEach(doc => {
+        const asset = doc.data();
+        if (!asset.url || !asset.type) return;
+
+        // Optimize Cloudinary URL
+        const parts = asset.url.split("/upload/");
+        const optimizedUrl = parts[0] + "/upload/f_auto,q_auto/" + parts[1];
+
+        const container = document.createElement("div");
+        container.className = "asset";
+
+        if (asset.type === "video") {
+          container.innerHTML = `
+            <video controls muted preload="metadata">
+              <source src="${optimizedUrl}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          `;
+        } else if (asset.type === "image") {
+          container.innerHTML = `<img src="${optimizedUrl}" alt="${asset.name}" loading="lazy">`;
+        }
+
+        galleryDiv.appendChild(container);
+      });
+    }
+
+    fetchGallery();
+  </script>
+</body>
+</html>

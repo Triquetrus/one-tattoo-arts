@@ -33,7 +33,7 @@ body{background:var(--grey);color:var(--white);font-family:'Inter',sans-serif;ov
   margin-top:3rem;width:280px;height:280px;
   border:1px solid var(--border);position:relative;overflow:hidden;
 }
-.login-art img{width:100%;height:100%;object-fit:cover;filter:grayscale(80%);opacity:.6;}
+.login-art img{width:100%;height:100%;object-fit:cover;filter:grayscale(80%);opacity:.8;}
 .login-art::before{
   content:'';position:absolute;inset:0;
   background:linear-gradient(135deg,transparent 50%,rgba(139,28,28,.3));
@@ -237,6 +237,48 @@ svg.donut{width:120px;height:120px;}
   .gallery-manager-grid{grid-template-columns:repeat(2,1fr);}
   .upload-form-grid{grid-template-columns:1fr;}
 }
+
+/* ===== MOBILE ADMIN ===== */
+.hamburger {
+  display: none; background: none; border: 1px solid var(--border);
+  color: var(--white); font-size: 1.2rem; padding: .4rem .7rem;
+  cursor: pointer; flex-shrink: 0;
+}
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.7); z-index: 199;
+}
+.sidebar-overlay.open { display: block; }
+
+@media(max-width:768px) {
+  .dashboard { overflow: hidden; }
+  .sidebar {
+    position: fixed; left: -220px; top: 0; bottom: 0;
+    z-index: 200; transition: left .3s ease;
+    width: var(--sidebar);
+  }
+  .sidebar.open { left: 0; }
+  .hamburger { display: block; }
+  .topbar { padding: .9rem 1rem; gap: .5rem; flex-wrap: wrap; }
+  .topbar-actions { gap: .4rem; }
+  .topbar-btn { font-size: .68rem; padding: .4rem .7rem; }
+  .page-content { padding: 1.2rem; }
+  .kpi-grid { grid-template-columns: repeat(2,1fr); }
+  .chart-grid, .recent-grid, .analytics-kpi,
+  .analytics-chart-row, .upload-form-grid { grid-template-columns: 1fr; }
+  .gallery-manager-grid { grid-template-columns: repeat(2,1fr); }
+  .review-table { display: block; overflow-x: auto; white-space: nowrap; }
+  #leads-table { display: block; overflow-x: auto; white-space: nowrap; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: .8rem; }
+  .action-row { flex-wrap: wrap; }
+  .search-input { width: 100%; }
+  .login-left { display: none; }
+  .login-right { width: 100%; padding: 2rem; }
+}
+@media(max-width:480px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .kpi-value { font-size: 2rem; }
+}
 </style>
 </head>
 <body>
@@ -249,7 +291,7 @@ svg.donut{width:120px;height:120px;}
       <div class="login-logo-big">ONE<br>TATTOO<br>ARTS</div>
       <p class="login-tagline">Admin Portal</p>
       <div class="login-art">
-        <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=400&q=80" alt="Studio"/>
+        <img src="assets/images/others/logo.jpeg" />
       </div>
     </div>
   </div>
@@ -257,16 +299,19 @@ svg.donut{width:120px;height:120px;}
     <h1 class="login-title">ADMIN<br>LOGIN</h1>
     <p class="login-sub">Sign in to access the studio dashboard</p>
     <label class="login-label">Email Address</label>
-    <input class="login-input" type="email" placeholder="admin@onetattooarts.com"/>
+    <input class="login-input" type="email" id="loginEmail" placeholder="admin@onetattooarts.com"/>
     <label class="login-label">Password</label>
-    <input class="login-input" type="password" placeholder="••••••••••"/>
-    <button class="login-btn" onclick="showDashboard()">SIGN IN TO DASHBOARD</button>
-    <p class="login-note">UI Demo — No authentication active yet<br/>Click to enter dashboard</p>
+    <input class="login-input" type="password" id="loginPassword" placeholder="••••••••••"/>
+    <div id="loginError" style="color:#ef4444;font-size:.75rem;margin-bottom:.8rem;letter-spacing:.05em;display:none;"></div>
+    <button class="login-btn" id="loginBtn" onclick="handleLogin()">SIGN IN TO DASHBOARD</button>
+    <p class="login-note">Secured with Firebase Authentication</p>
   </div>
 </div>
 
 <!-- ===== DASHBOARD ===== -->
 <div class="dashboard" id="dashboard">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-logo">
@@ -275,28 +320,27 @@ svg.donut{width:120px;height:120px;}
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-title">Overview</div>
-      <a class="nav-item active" onclick="showPanel('overview',this)">
+      <a class="nav-item active" data-panel="overview" onclick="showPanel('overview',this)">
         <span class="nav-icon">◈</span> Dashboard
       </a>
-      <a class="nav-item" onclick="showPanel('bookings',this)">
-        <span class="nav-icon">📅</span> Bookings <span class="nav-badge">12</span>
+      <a class="nav-item" data-panel="bookings" onclick="showPanel('bookings',this)">
+        <span class="nav-icon">📅</span> Leads <span class="nav-badge" id="leadsBadge"></span>
       </a>
       <div class="nav-section-title" style="margin-top:1rem;">Content</div>
-      <a class="nav-item" onclick="showPanel('upload',this)">
+      <a class="nav-item" data-panel="upload" onclick="showPanel('upload',this)">
         <span class="nav-icon">↑</span> Upload Media
       </a>
-      <a class="nav-item" onclick="showPanel('gallery',this)">
+      <a class="nav-item" data-panel="gallery" onclick="showPanel('gallery',this)">
         <span class="nav-icon">◫</span> Gallery Manager
       </a>
-      <a class="nav-item" onclick="showPanel('reviews',this)">
-        <span class="nav-icon">★</span> Reviews <span class="nav-badge">3</span>
+      <a class="nav-item" data-panel="reviews" onclick="showPanel('reviews',this)">
+        <span class="nav-icon">★</span> Reviews <span class="nav-badge" id="reviewsBadge"></span>
       </a>
       <div class="nav-section-title" style="margin-top:1rem;">Reports</div>
-      <a class="nav-item" onclick="showPanel('analytics',this)">
+      <a class="nav-item" data-panel="analytics" onclick="showPanel('analytics',this)">
         <span class="nav-icon">↗</span> Analytics
       </a>
       <div class="nav-section-title" style="margin-top:1rem;">Studio</div>
-      <a class="nav-item" onclick="showPanel('artists',this)">
         <span class="nav-icon">✦</span> Artists
       </a>
       <a class="nav-item" href="index.html" target="_blank">
@@ -307,19 +351,20 @@ svg.donut{width:120px;height:120px;}
       <div class="sidebar-user">
         <div class="sidebar-avatar">AN</div>
         <div class="sidebar-user-info">
-          <div class="sidebar-user-name">Alex Noir</div>
+          <div class="sidebar-user-name" id="sidebarUserName">—</div>
           <div class="sidebar-user-role">Studio Admin</div>
         </div>
       </div>
-      <button class="logout-btn" onclick="showLogin()">Sign Out</button>
+      <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">Sign Out</button>
     </div>
   </aside>
 
   <!-- Main -->
   <div class="main-content">
-    <div class="topbar" id="topbar">
+   <div class="topbar" id="topbar">
+     <button class="hamburger" onclick="toggleSidebar()">☰</button>
       <div>
-        <div class="topbar-title" id="topbarTitle">DASHBOARD</div>
+       <div class="topbar-title" id="topbarTitle">DASHBOARD</div>
         <div class="topbar-sub" id="topbarSub">Welcome back, Alex. Here's what's happening today.</div>
       </div>
       <div class="topbar-actions">
@@ -446,25 +491,24 @@ svg.donut{width:120px;height:120px;}
       <div class="panel" id="panel-bookings">
         <div class="section-header">
           <div>
-            <div class="section-h">BOOKINGS</div>
-            <div class="section-sub">87 sessions booked · 15 pending confirmation</div>
+            <div class="section-h">LEADS</div>
+            <div class="section-sub" id="leads-sub">Loading leads from Firestore…</div>
           </div>
           <div class="action-row">
-            <input class="search-input" placeholder="Search by name or artist..."/>
-            <button class="topbar-btn">Export CSV</button>
-            <button class="topbar-btn primary">+ New Booking</button>
+            <input class="search-input" id="leadsSearch" placeholder="Search by name or email…" oninput="filterLeads(this.value)"/>
+            <button class="topbar-btn" onclick="exportLeadsCSV()">Export CSV</button>
           </div>
         </div>
-        <table class="review-table">
+        <table class="review-table" id="leads-table">
           <thead><tr>
-            <th>Client</th><th>Style</th><th>Artist</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th>
+            <th>Client</th><th>Phone</th><th>Style / Placement</th><th>Artist</th><th>Vision</th><th>Submitted</th><th>Action</th>
           </tr></thead>
-          <tbody>
-            <tr><td><b style="color:var(--white)">Priya Sharma</b><br>priya@email.com</td><td>Blackwork Sleeve</td><td>Alex Noir</td><td>Apr 12, 2026</td><td>₹45,000</td><td><span class="review-approved">Confirmed</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Cancel</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Rohan Mehta</b><br>rohan@email.com</td><td>Realism Portrait</td><td>Maya Cross</td><td>Apr 15, 2026</td><td>₹22,000</td><td><span class="review-approved">Confirmed</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Cancel</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Anika Desai</b><br>anika@email.com</td><td>Minimal Wrist</td><td>Alex Noir</td><td>Apr 18, 2026</td><td>₹5,500</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Confirm</button><button class="tbl-btn del">Cancel</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Vikram Kumar</b><br>vikram@email.com</td><td>Japanese Full Back</td><td>Kai Storm</td><td>Apr 20, 2026</td><td>₹75,000</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Confirm</button><button class="tbl-btn del">Cancel</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Meera Nair</b><br>meera@email.com</td><td>Anime Full Color</td><td>Zara Ink</td><td>Mar 30, 2026</td><td>₹18,000</td><td><span class="booking-status completed" style="font-size:.65rem;padding:.2rem .6rem;">Completed</span></td><td><div class="tbl-actions"><button class="tbl-btn">View</button></div></td></tr>
+          <tbody id="leads-tbody">
+            <tr><td><b style="color:var(--white)">Priya Sharma</b><br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="89f9fbe0f0e8c9ece4e8e0e5a7eae6e4">[email&#160;protected]</a></td><td>Blackwork Sleeve</td><td>Alex Noir</td><td>Apr 12, 2026</td><td>₹45,000</td><td><span class="review-approved">Confirmed</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Cancel</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Rohan Mehta</b><br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bfcdd0d7ded1ffdad2ded6d391dcd0d2">[email&#160;protected]</a></td><td>Realism Portrait</td><td>Maya Cross</td><td>Apr 15, 2026</td><td>₹22,000</td><td><span class="review-approved">Confirmed</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Cancel</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Anika Desai</b><br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bfded1d6d4deffdad2ded6d391dcd0d2">[email&#160;protected]</a></td><td>Minimal Wrist</td><td>Alex Noir</td><td>Apr 18, 2026</td><td>₹5,500</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Confirm</button><button class="tbl-btn del">Cancel</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Vikram Kumar</b><br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="93e5faf8e1f2fed3f6fef2faffbdf0fcfe">[email&#160;protected]</a></td><td>Japanese Full Back</td><td>Kai Storm</td><td>Apr 20, 2026</td><td>₹75,000</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Confirm</button><button class="tbl-btn del">Cancel</button></div></td></tr>
+            <tr><td><b style="color:var(--white)">Meera Nair</b><br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4c2129293e2d0c29212d2520622f2321">[email&#160;protected]</a></td><td>Anime Full Color</td><td>Zara Ink</td><td>Mar 30, 2026</td><td>₹18,000</td><td><span class="booking-status completed" style="font-size:.65rem;padding:.2rem .6rem;">Completed</span></td><td><div class="tbl-actions"><button class="tbl-btn">View</button></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -477,45 +521,67 @@ svg.donut{width:120px;height:120px;}
             <div class="section-sub">Add new tattoo images or videos to the gallery</div>
           </div>
         </div>
-        <div class="upload-zone" onclick="alert('File upload — backend integration pending')">
-          <div class="upload-icon">⬆</div>
-          <div class="upload-text">Drag & drop files here, or click to browse</div>
+        <!-- Hidden file input -->
+        <input type="file" id="fileInput" accept="image/*,video/*" style="display:none" onchange="handleFileSelect(this)"/>
+
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon" id="uploadIcon">⬆</div>
+          <div class="upload-text" id="uploadText">Drag & drop files here, or click to browse</div>
           <div class="upload-subtext">Supports JPG, PNG, MP4, MOV · Max 50MB per file</div>
+          <!-- Progress bar (hidden until upload starts) -->
+          <div id="uploadProgress" style="display:none;margin-top:1.5rem;width:100%;max-width:400px;">
+            <div style="height:2px;background:var(--border);position:relative;overflow:hidden;">
+              <div id="uploadBar" style="position:absolute;left:0;top:0;height:100%;background:var(--gold);width:0%;transition:width .3s;"></div>
+            </div>
+            <div id="uploadPct" style="font-family:'Inter',sans-serif;font-size:.7rem;color:var(--gold);margin-top:.5rem;letter-spacing:.1em;">0%</div>
+          </div>
         </div>
+
         <div class="upload-form-grid">
           <div class="form-group">
             <label class="form-label">Title / Alt Text</label>
-            <input class="form-input" placeholder="E.g. Geometric mandala sleeve — Alex Noir"/>
+            <input class="form-input" id="uploadTitle" placeholder="E.g. Geometric mandala sleeve — Alex Noir"/>
           </div>
           <div class="form-group">
             <label class="form-label">Tattoo Style / Category</label>
-            <select class="form-select">
-              <option>Minimal</option><option>Geometric</option><option>Realism</option>
-              <option>Blackwork</option><option>Japanese</option><option>Fine Line</option>
-              <option>Tribal</option><option>Anime / Watercolor</option>
+            <select class="form-select" id="uploadCategory">
+              <option value="blackwork">Blackwork</option>
+              <option value="color">Color</option>
+              <option value="coverup">Cover-Up</option>
+              <option value="geometric">Geometric</option>
+              <option value="lettering">Lettering</option>
+              <option value="minimalist">Minimalist</option>
+              <option value="portrait">Portrait</option>
+              <option value="realism">Realism</option>
+              <option value="religious">Religious</option>
+              <option value="tribal">Tribal</option>
+              <option value="others">Others</option>
             </select>
           </div>
           <div class="form-group">
             <label class="form-label">Artist</label>
-            <select class="form-select">
+            <select class="form-select" id="uploadArtist">
               <option>Alex Noir</option><option>Maya Cross</option>
               <option>Kai Storm</option><option>Zara Ink</option>
             </select>
           </div>
           <div class="form-group">
             <label class="form-label">Visibility</label>
-            <select class="form-select">
-              <option>Public — Show on website</option>
-              <option>Private — Internal only</option>
-              <option>Featured — Homepage gallery</option>
+            <select class="form-select" id="uploadVisibility">
+              <option value="public">Public — Show on website</option>
+              <option value="private">Private — Internal only</option>
+              <option value="featured">Featured — Homepage gallery</option>
             </select>
           </div>
           <div class="form-group" style="grid-column:span 2;">
             <label class="form-label">Description / Notes</label>
-            <input class="form-input" placeholder="Optional description for internal reference..."/>
+            <input class="form-input" id="uploadDesc" placeholder="Optional description for internal reference..."/>
           </div>
         </div>
-        <button class="topbar-btn primary" onclick="alert('Upload submitted — backend integration pending')">UPLOAD TO GALLERY</button>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="topbar-btn primary" id="uploadBtn" onclick="handleUpload()">UPLOAD TO GALLERY</button>
+          <span id="uploadStatus" style="font-family:'Inter',sans-serif;font-size:.78rem;color:var(--light);"></span>
+        </div>
       </div>
 
       <!-- GALLERY MANAGER PANEL -->
@@ -523,25 +589,31 @@ svg.donut{width:120px;height:120px;}
         <div class="section-header">
           <div>
             <div class="section-h">GALLERY MANAGER</div>
-            <div class="section-sub">18 items shown · 4,200+ total works</div>
+            <div class="section-sub" id="gallery-sub">Loading from Firestore…</div>
           </div>
           <div class="action-row">
-            <select class="form-select" style="width:160px;padding:.4rem .8rem;">
-              <option>All Styles</option><option>Minimal</option><option>Geometric</option>
-              <option>Realism</option><option>Blackwork</option>
+            <select class="form-select" id="galleryFilter" style="width:160px;padding:.4rem .8rem;" onchange="handleGalleryFilter(this.value)">
+              <option value="all">All Styles</option>
+              <option value="blackwork">Blackwork</option>
+              <option value="color">Color</option>
+              <option value="coverup">Cover-Up</option>
+              <option value="geometric">Geometric</option>
+              <option value="lettering">Lettering</option>
+              <option value="minimalist">Minimalist</option>
+              <option value="portrait">Portrait</option>
+              <option value="realism">Realism</option>
+              <option value="religious">Religious</option>
+              <option value="tribal">Tribal</option>
+              <option value="others">Others</option>
             </select>
             <button class="topbar-btn primary" onclick="showPanel('upload',null)">+ Upload New</button>
           </div>
         </div>
-        <div class="gallery-manager-grid">
-          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1554774853-719586f82d77?w=300&q=80" alt=""/><span class="gm-tag">Realism</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
-          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=300&q=80" alt=""/><span class="gm-tag">Minimal</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
-          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=300&q=80" alt=""/><span class="gm-tag">Geometric</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
-          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=300&q=80" alt=""/><span class="gm-tag">Blackwork</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
-          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=300&q=80" alt=""/><span class="gm-tag">Anime</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
-          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=300&q=80" alt=""/><span class="gm-tag">Fine Line</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
-          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=300&q=80" alt=""/><span class="gm-tag">Tribal</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
-          <div class="gm-item"><img class="gm-img" src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=300&q=80" alt=""/><span class="gm-tag">Realism</span><div class="gm-overlay"><button class="gm-btn">Edit</button><button class="gm-btn del">Delete</button></div></div>
+        <div class="gallery-manager-grid" id="gallery-manager-grid">
+          <div style="grid-column:1/-1;padding:2rem;text-align:center;color:var(--mid);font-size:.8rem;letter-spacing:.1em;">Loading…</div>
+        </div>
+        <div style="text-align:center;margin-top:1.5rem;">
+          <button class="topbar-btn" id="gallery-load-more" style="display:none;" onclick="window._loadMoreGallery()">Load More</button>
         </div>
       </div>
 
@@ -553,8 +625,10 @@ svg.donut{width:120px;height:120px;}
             <div class="section-sub">3 pending approval · 42 published · Avg 4.9★</div>
           </div>
           <div class="action-row">
-            <select class="form-select" style="width:180px;padding:.4rem .8rem;">
-              <option>All Reviews</option><option>Pending</option><option>Published</option>
+            <select class="form-select" id="reviewsFilter" style="width:180px;padding:.4rem .8rem;" onchange="handleReviewsFilter(this.value)">
+              <option value="all">All Reviews</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Published</option>
             </select>
           </div>
         </div>
@@ -562,12 +636,7 @@ svg.donut{width:120px;height:120px;}
           <thead><tr>
             <th>Author</th><th>Stars</th><th>Review</th><th>Tattoo</th><th>Date</th><th>Status</th><th>Actions</th>
           </tr></thead>
-          <tbody>
-            <tr><td><b style="color:var(--white)">Priya Sharma</b></td><td><span class="review-stars-sm">★★★★★</span></td><td style="max-width:200px;font-size:.78rem;">"The most extraordinary tattoo experience of my life..."</td><td>Blackwork Sleeve</td><td>Mar 2026</td><td><span class="review-approved">Published</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Remove</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Rohan Mehta</b></td><td><span class="review-stars-sm">★★★★★</span></td><td style="max-width:200px;font-size:.78rem;">"Maya did my portrait tattoo and I cannot stop staring..."</td><td>Realism Portrait</td><td>Feb 2026</td><td><span class="review-approved">Published</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit</button><button class="tbl-btn del">Remove</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Arjun Kapoor</b></td><td><span class="review-stars-sm">★★★★★</span></td><td style="max-width:200px;font-size:.78rem;">"Zara created an anime tattoo that makes everyone stop..."</td><td>Anime Color</td><td>Apr 2026</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Approve</button><button class="tbl-btn del">Reject</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Sneha Joshi</b></td><td><span class="review-stars-sm">★★★★☆</span></td><td style="max-width:200px;font-size:.78rem;">"Amazing studio, wonderful team, slight wait time..."</td><td>Minimal Wrist</td><td>Apr 2026</td><td><span class="review-pending">Pending</span></td><td><div class="tbl-actions"><button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)">Approve</button><button class="tbl-btn del">Reject</button></div></td></tr>
-          </tbody>
+          <tbody id="reviews-tbody"><tr><td colspan="7" style="text-align:center;color:var(--mid);padding:2rem;font-size:.8rem;">Loading…</td></tr></tbody>
         </table>
       </div>
 
@@ -632,97 +701,738 @@ svg.donut{width:120px;height:120px;}
         </div>
       </div>
 
-      <!-- ARTISTS PANEL -->
-      <div class="panel" id="panel-artists">
-        <div class="section-header">
-          <div>
-            <div class="section-h">ARTISTS</div>
-            <div class="section-sub">4 active artists · Manage profiles and bookings</div>
-          </div>
-          <button class="topbar-btn primary">+ Add Artist</button>
-        </div>
-        <table class="review-table">
-          <thead><tr><th>Artist</th><th>Specialty</th><th>Sessions (MTD)</th><th>Revenue (MTD)</th><th>Avg Rating</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            <tr><td><b style="color:var(--white)">Alex Noir</b><br>Lead Artist</td><td>Blackwork · Geometric</td><td>28</td><td>₹1,42,000</td><td><span class="review-stars-sm">★ 5.0</span></td><td><span class="review-approved">Active</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit Profile</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Maya Cross</b><br>Senior Artist</td><td>Fine Line · Realism</td><td>22</td><td>₹1,05,000</td><td><span class="review-stars-sm">★ 4.9</span></td><td><span class="review-approved">Active</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit Profile</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Kai Storm</b><br>Senior Artist</td><td>Japanese · Tribal</td><td>20</td><td>₹98,000</td><td><span class="review-stars-sm">★ 4.9</span></td><td><span class="review-approved">Active</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit Profile</button></div></td></tr>
-            <tr><td><b style="color:var(--white)">Zara Ink</b><br>Artist</td><td>Anime · Watercolor</td><td>17</td><td>₹72,000</td><td><span class="review-stars-sm">★ 4.8</span></td><td><span class="review-approved">Active</span></td><td><div class="tbl-actions"><button class="tbl-btn">Edit Profile</button></div></td></tr>
-          </tbody>
-        </table>
-      </div>
+    
 
     </div><!-- /page-content -->
   </div><!-- /main-content -->
 </div><!-- /dashboard -->
 
-<script>
-const cursor=document.getElementById('cursor');
-document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';});
 
-function showDashboard(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('dashboard').style.display='flex';
-  buildCharts();
-}
-function showLogin(){
-  document.getElementById('dashboard').style.display='none';
-  document.getElementById('loginScreen').style.display='flex';
-}
+<!-- ===== FIREBASE + APP SCRIPTS ===== -->
+<script type="module">
+// ── Firebase SDK ──────────────────────────────────────────────────────────
+import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+                                    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, orderBy, limit, startAfter,
+         getDocs, doc, deleteDoc, updateDoc, addDoc, serverTimestamp, where }
+                                    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL, deleteObject }
+                                    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-const panelMeta={
-  overview:{title:'DASHBOARD',sub:'Welcome back, Alex. Here\'s what\'s happening today.'},
-  bookings:{title:'BOOKINGS',sub:'87 sessions booked this month · 15 pending confirmation'},
-  upload:{title:'UPLOAD MEDIA',sub:'Add new content to the gallery'},
-  gallery:{title:'GALLERY MANAGER',sub:'Manage, edit, and organise your portfolio'},
-  reviews:{title:'REVIEWS MANAGER',sub:'Approve and manage client reviews'},
-  analytics:{title:'ANALYTICS',sub:'April 2026 · Performance overview'},
-  artists:{title:'ARTISTS',sub:'Manage artist profiles and availability'}
+const firebaseConfig = {
+   apiKey: "AIzaSyCE-KTvHu_bfn8RD6U_bnX8Qrnl-nIkCew",
+
+    authDomain: "onetattooart-29e85.firebaseapp.com",
+
+    projectId: "onetattooart-29e85",
+
+    storageBucket: "onetattooart-29e85.firebasestorage.app",
+
+    messagingSenderId: "1001410733981",
+
+    appId: "1:1001410733981:web:35b6c391ba97d3a823f174"
 };
 
-function showPanel(id, navEl){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  const el=document.getElementById('panel-'+id);
-  if(el)el.classList.add('active');
-  if(navEl){
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    navEl.classList.add('active');
+const app     = initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
+
+// ── Cursor ────────────────────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+});
+
+// ── Auth state watcher ────────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  if (user) {
+    showDashboard(user);
+  } else {
+    showLoginScreen();
   }
-  const meta=panelMeta[id];
-  if(meta){
-    document.getElementById('topbarTitle').textContent=meta.title;
-    document.getElementById('topbarSub').textContent=meta.sub;
+});
+
+function showDashboard(user) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display   = 'flex';
+  const emailName = user.email.split('@')[0];
+  const displayName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+  document.getElementById('sidebarUserName').textContent = displayName;
+  buildCharts();
+  loadLeads();
+  loadLiveDashboard();
+}
+
+async function loadLiveDashboard() {
+  try {
+    const [leadsSnap, gallerySnap, allReviewsSnap, pendingReviewsSnap] = await Promise.all([
+      getDocs(collection(db, 'leads')),
+      getDocs(collection(db, 'gallery')),
+      getDocs(collection(db, 'reviews')),
+      getDocs(query(collection(db, 'reviews'), where('status','==','pending')))
+    ]);
+
+    const leadsCount    = leadsSnap.size;
+    const galleryCount  = gallerySnap.size;
+    const totalReviews  = allReviewsSnap.size;
+    const pendingReviews = pendingReviewsSnap.size;
+
+    // ── KPI Cards (overview panel) ──
+    const kpiCards = document.querySelectorAll('#panel-overview .kpi-card');
+    if (kpiCards[1]) {
+      kpiCards[1].querySelector('.kpi-value').textContent = leadsCount;
+      kpiCards[1].querySelector('.kpi-change').textContent = leadsCount + ' total enquiries';
+    }
+    if (kpiCards[2]) {
+      kpiCards[2].querySelector('.kpi-value').textContent = pendingReviews;
+      kpiCards[2].querySelector('.kpi-change').textContent = pendingReviews + ' reviews pending';
+      kpiCards[2].querySelector('.kpi-change').className = 'kpi-change ' + (pendingReviews > 0 ? 'down' : 'up');
+    }
+    if (kpiCards[3]) {
+      // Avg rating from approved reviews
+      const approved = allReviewsSnap.docs.filter(d => d.data().status === 'approved');
+      const avgRating = approved.length
+        ? (approved.reduce((sum, d) => sum + (d.data().stars || 5), 0) / approved.length).toFixed(1)
+        : '—';
+      kpiCards[3].querySelector('.kpi-value').textContent = avgRating + '★';
+      kpiCards[3].querySelector('.kpi-change').textContent = approved.length + ' approved reviews';
+    }
+
+    // ── Leads badge ──
+    const badge = document.getElementById('leadsBadge');
+    if (badge) badge.textContent = leadsCount || '';
+
+    // ── Reviews badge ──
+    const rBadge = document.getElementById('reviewsBadge');
+    if (rBadge) rBadge.textContent = pendingReviews || '';
+
+    // ── Recent bookings list (overview) ──
+    const recentBox = document.querySelector('#panel-overview .recent-box');
+    if (recentBox) {
+      const q = query(collection(db, 'leads'), orderBy('createdAt', 'desc'), limit(5));
+      const recentSnap = await getDocs(q);
+      if (!recentSnap.empty) {
+        const title = recentBox.querySelector('.recent-title').outerHTML;
+        recentBox.innerHTML = title;
+        recentSnap.forEach(d => {
+          const l = d.data();
+          const initials = (l.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+          const date = l.createdAt?.toDate ? l.createdAt.toDate().toLocaleDateString('en-IN',{month:'short',day:'numeric'}) : '—';
+          recentBox.innerHTML += `
+            <div class="booking-item">
+              <div class="booking-avatar">${escHtml(initials)}</div>
+              <div>
+                <div class="booking-name">${escHtml(l.name||'—')}</div>
+                <div class="booking-meta">${escHtml(l.style||'—')} · ${escHtml(l.artist||'No pref')} · ${date}</div>
+              </div>
+              <span class="booking-status pending">New</span>
+            </div>`;
+        });
+      }
+    }
+
+    // ── Style Donut Chart (live from gallery) ──
+    const catCounts = {};
+    gallerySnap.forEach(d => {
+      const cat = (d.data().category || 'others').toLowerCase();
+      catCounts[cat] = (catCounts[cat] || 0) + 1;
+    });
+    buildLiveDonut(catCounts, galleryCount);
+
+    // ── Analytics KPIs ──
+    const aKpis = document.querySelectorAll('#panel-analytics .kpi-card');
+    if (aKpis[1]) {
+      aKpis[1].querySelector('.kpi-value').textContent = leadsCount;
+      aKpis[1].querySelector('.kpi-change').textContent = leadsCount + ' total leads';
+    }
+    if (aKpis[2]) {
+      const rate = leadsCount > 0 ? ((leadsCount / Math.max(leadsCount * 12, 1)) * 100).toFixed(1) : '—';
+      aKpis[2].querySelector('.kpi-value').textContent = leadsCount + ' leads';
+    }
+
+    // ── Analytics panel subtitle ──
+const analyticsSub = document.querySelector('#panel-analytics .section-sub');
+const now = new Date();
+if (analyticsSub) {
+  analyticsSub.textContent = now.toLocaleString('en-IN', {month:'long', year:'numeric'}) + ' · Live data from Firestore';
+}
+// Style distribution in analytics bar (rebuild with live counts)
+const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+const currentMonth = now.getMonth();
+// We can count leads per month from createdAt
+const monthCounts = new Array(12).fill(0);
+leadsSnap.forEach(d => {
+  const ts = d.data().createdAt;
+  if (ts?.toDate) {
+    const m = ts.toDate().getMonth();
+    monthCounts[m]++;
+  }
+});
+const maxVal = Math.max(...monthCounts, 1);
+['barChart','analyticsBar'].forEach(chartId => {
+  const c = document.getElementById(chartId);
+  if (!c) return;
+  c.innerHTML = '';
+  months.forEach((m, i) => {
+    const bar = document.createElement('div'); bar.className = 'chart-bar';
+    const fill = document.createElement('div'); fill.className = 'bar-fill';
+    const h = monthCounts[i] ? ((monthCounts[i]/maxVal)*100) : 5;
+    fill.style.height = h + '%';
+    if (!monthCounts[i]) fill.style.background = 'var(--grey4)';
+    const label = document.createElement('div'); label.className = 'bar-label';
+    label.textContent = m;
+    if (i === currentMonth) { fill.style.background = 'var(--gold)'; }
+    bar.appendChild(fill); bar.appendChild(label); c.appendChild(bar);
+  });
+});
+
+  } catch(e) {
+    console.warn('Dashboard KPI error:', e);
   }
 }
 
-function buildCharts(){
-  const months=['J','F','M','A','M','J','J','A','S','O','N','D'];
-  const vals=[52,48,67,87,0,0,0,0,0,0,0,0];
-  const max=Math.max(...vals.filter(v=>v>0));
-  const charts=['barChart','analyticsBar'];
-  charts.forEach(id=>{
-    const c=document.getElementById(id);
-    if(!c)return;
-    c.innerHTML='';
-    months.forEach((m,i)=>{
-      const bar=document.createElement('div');
-      bar.className='chart-bar';
-      const fill=document.createElement('div');
-      fill.className='bar-fill';
-      fill.style.height=vals[i]?((vals[i]/max)*100)+'%':'12px';
-      if(!vals[i])fill.style.background='var(--grey4)';
-      const label=document.createElement('div');
-      label.className='bar-label';
-      label.textContent=m;
-      bar.appendChild(fill);
-      bar.appendChild(label);
-      c.appendChild(bar);
-    });
-    setTimeout(()=>{
-      c.querySelectorAll('.bar-fill').forEach(b=>{const h=b.style.height;b.style.height='0';setTimeout(()=>b.style.height=h,50);});
-    },100);
+function buildLiveDonut(catCounts, total) {
+  const donutSvg = document.querySelector('#panel-overview .donut');
+  const donutLegend = document.querySelector('#panel-overview .donut-legend');
+  if (!donutSvg || !donutLegend || total === 0) return;
+
+  const COLORS = ['#8b1c1c','#c9a96e','#3a7a5a','#3a3a8a','#7a3a8a','#5a7a3a','#8a5a3a','#3a6a7a','#7a6a3a','#5a3a7a','#3a5a3a'];
+  const sorted = Object.entries(catCounts).sort((a,b) => b[1]-a[1]).slice(0,6);
+  const circumference = 2 * Math.PI * 40; // r=40
+
+  // Clear existing circles (keep the bg circle)
+  donutSvg.querySelectorAll('circle:not(:first-child)').forEach(c => c.remove());
+
+  let offset = 25; // start offset
+  const segments = sorted.map(([cat, count], i) => {
+    const pct = count / total;
+    const dashLen = pct * circumference;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx','50'); circle.setAttribute('cy','50'); circle.setAttribute('r','40');
+    circle.setAttribute('fill','none');
+    circle.setAttribute('stroke', COLORS[i % COLORS.length]);
+    circle.setAttribute('stroke-width','18');
+    circle.setAttribute('stroke-dasharray', `${dashLen} ${circumference - dashLen}`);
+    circle.setAttribute('stroke-dashoffset', -offset + 25);
+    circle.setAttribute('transform','rotate(-90 50 50)');
+    donutSvg.appendChild(circle);
+    offset += dashLen;
+    return { cat, count, pct, color: COLORS[i % COLORS.length] };
+  });
+
+  // Rebuild legend
+  donutLegend.innerHTML = segments.map(s =>
+    `<div class="donut-item">
+      <span class="donut-dot" style="background:${s.color}"></span>
+      <span class="donut-name">${s.cat.charAt(0).toUpperCase()+s.cat.slice(1)}</span>
+      <span class="donut-pct">${Math.round(s.pct*100)}%</span>
+    </div>`
+  ).join('');
+}
+
+async function loadDashboardKPIs() {
+  try {
+    const [leadsSnap, gallerySnap, reviewsSnap] = await Promise.all([
+      getDocs(collection(db, 'leads')),
+      getDocs(collection(db, 'gallery')),
+      getDocs(query(collection(db, 'reviews'), where('status','==','pending')))
+    ]);
+    const leadsCount   = leadsSnap.size;
+    const galleryCount = gallerySnap.size;
+    const pendingReviews = reviewsSnap.size;
+
+    // Update KPI cards if they exist
+    const kpiEls = document.querySelectorAll('.kpi-value');
+    if (kpiEls[0]) kpiEls[0].textContent = leadsCount;
+    if (kpiEls[1]) kpiEls[1].textContent = galleryCount;
+    if (kpiEls[2]) kpiEls[2].textContent = pendingReviews;
+
+    // Update leads badge
+    const badge = document.getElementById('leadsBadge');
+    if (badge) badge.textContent = leadsCount || '';
+  } catch(e) {
+    console.warn('KPI load error:', e);
+  }
+}
+
+function showLoginScreen() {
+  document.getElementById('dashboard').style.display   = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  const btn = document.getElementById('loginBtn');
+  if (btn) { btn.textContent = 'SIGN IN TO DASHBOARD'; btn.disabled = false; }
+}
+
+// ── Login ─────────────────────────────────────────────────────────────────
+window.handleLogin = async function() {
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn      = document.getElementById('loginBtn');
+  const errEl    = document.getElementById('loginError');
+
+  errEl.style.display = 'none';
+  btn.textContent = 'SIGNING IN…';
+  btn.disabled = true;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    // onAuthStateChanged will fire and call showDashboard()
+  } catch (err) {
+    btn.textContent = 'SIGN IN TO DASHBOARD';
+    btn.disabled = false;
+    errEl.textContent = friendlyAuthError(err.code);
+    errEl.style.display = 'block';
+  }
+};
+
+// Allow Enter key to submit login
+document.getElementById('loginPassword')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') window.handleLogin();
+});
+
+window.handleLogout = async function() {
+  await signOut(auth);
+  // onAuthStateChanged fires showLoginScreen()
+};
+
+function friendlyAuthError(code) {
+  if (['auth/user-not-found','auth/wrong-password','auth/invalid-credential'].includes(code))
+    return 'Invalid email or password.';
+  if (code === 'auth/too-many-requests')
+    return 'Too many attempts. Please wait and try again.';
+  return 'Login failed. Please try again.';
+}
+
+// ── Panel navigation ──────────────────────────────────────────────────────
+const panelMeta = {
+  overview : { title: 'DASHBOARD',        sub: 'Welcome back. Here\'s what\'s happening today.' },
+  bookings : { title: 'LEADS',            sub: 'Appointment requests from the booking form' },
+  upload   : { title: 'UPLOAD MEDIA',     sub: 'Add new content to the gallery' },
+  gallery  : { title: 'GALLERY MANAGER',  sub: 'Manage, edit, and organise your portfolio' },
+  reviews  : { title: 'REVIEWS MANAGER',  sub: 'Approve and manage client reviews' },
+  analytics: { title: 'ANALYTICS',        sub: 'April 2026 · Performance overview' },
+};
+
+window.showPanel = function(id, navEl) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('panel-' + id);
+  if (el) el.classList.add('active');
+  if (navEl) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    navEl.classList.add('active');
+  }
+  const meta = panelMeta[id];
+  if (meta) {
+    document.getElementById('topbarTitle').textContent = meta.title;
+    document.getElementById('topbarSub').textContent   = meta.sub;
+  }
+  // Lazy-load data panels
+  if (id === 'gallery')  loadGallery('all', true);
+  if (id === 'reviews')  loadReviews('all');
+  if (id === 'bookings') loadLeads();
+};
+
+// ── Charts (static demo data) ─────────────────────────────────────────────
+function buildCharts() {
+  // Charts now built with live data in loadLiveDashboard()
+  // Leave bars empty until data loads
+}
+
+// ── LEADS ─────────────────────────────────────────────────────────────────
+let _allLeads = []; // cache for client-side search
+
+async function loadLeads() {
+  const tbody = document.getElementById('leads-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--mid);padding:2rem;font-size:.8rem;">Loading…</td></tr>`;
+
+  try {
+    const q    = query(collection(db, 'leads'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    _allLeads  = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Update nav badge
+    const badge = document.getElementById('leadsBadge');
+    if (badge) badge.textContent = _allLeads.length || '';
+
+    const sub = document.getElementById('leads-sub');
+    if (sub) sub.textContent = `${_allLeads.length} lead${_allLeads.length !== 1 ? 's' : ''} received`;
+
+    renderLeadsRows(_allLeads, tbody);
+  } catch (err) {
+    console.error('Leads load error:', err);
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#ef4444;padding:2rem;font-size:.8rem;">Failed to load. Check Firestore rules.</td></tr>`;
+  }
+}
+
+function renderLeadsRows(leads, tbody) {
+  tbody = tbody || document.getElementById('leads-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  if (!leads.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--mid);padding:2rem;font-size:.8rem;">No leads yet. They'll appear here when clients submit the booking form.</td></tr>`;
+    return;
+  }
+
+  leads.forEach(l => {
+    const date     = l.createdAt?.toDate
+      ? l.createdAt.toDate().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+      : '—';
+    const initials = (l.name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const tr       = document.createElement('tr');
+    tr.dataset.id  = l.id;
+    tr.innerHTML = `
+      <td>
+        <div style="display:flex;align-items:center;gap:.8rem;">
+          <div class="booking-avatar">${escHtml(initials)}</div>
+          <div>
+            <div class="booking-name">${escHtml(l.name)}</div>
+            <div class="booking-meta">${escHtml(l.email)}</div>
+          </div>
+        </div>
+      </td>
+      <td style="color:var(--light);font-size:.82rem;">${escHtml(l.phone)}</td>
+      <td style="font-size:.8rem;">${escHtml(l.style||'—')}<br><span style="color:var(--mid);font-size:.72rem;">${escHtml(l.placement||'')}</span></td>
+      <td style="font-size:.8rem;">${escHtml(l.artist||'No preference')}</td>
+      <td style="font-size:.75rem;max-width:160px;color:var(--light);">${escHtml((l.idea||'—').slice(0,80))}${(l.idea||'').length>80?'…':''}</td>
+      <td style="color:var(--mid);font-size:.75rem;white-space:nowrap;">${date}</td>
+      <td>
+        <div class="tbl-actions">
+          <span class="booking-status pending">New</span>
+          <button class="tbl-btn del" onclick="window.deleteLead('${l.id}',this)" style="margin-left:.4rem;">✕</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
   });
 }
+
+window.deleteLead = async function(id, btn) {
+  if (!confirm('Remove this lead?')) return;
+  btn.disabled = true;
+  await deleteDoc(doc(db, 'leads', id));
+  document.querySelector(`tr[data-id="${id}"]`)?.remove();
+  _allLeads = _allLeads.filter(l => l.id !== id);
+  const badge = document.getElementById('leadsBadge');
+  if (badge) badge.textContent = _allLeads.length || '';
+};
+
+window.filterLeads = function(term) {
+  const t = term.toLowerCase();
+  const filtered = t
+    ? _allLeads.filter(l => (l.name||'').toLowerCase().includes(t) || (l.email||'').toLowerCase().includes(t) || (l.phone||'').includes(t))
+    : _allLeads;
+  renderLeadsRows(filtered);
+};
+
+window.exportLeadsCSV = function() {
+  if (!_allLeads.length) { alert('No leads to export.'); return; }
+  const headers = ['Name','Email','Phone','Artist','Style','Placement','Idea','Submitted'];
+  const rows = _allLeads.map(l => [
+    l.name, l.email, l.phone, l.artist, l.style, l.placement, l.idea,
+    l.createdAt?.toDate ? l.createdAt.toDate().toLocaleDateString() : ''
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `leads_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+};
+
+// ── UPLOAD ────────────────────────────────────────────────────────────────
+let _selectedFile = null;
+
+window.handleFileSelect = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  _selectedFile = file;
+  document.getElementById('uploadText').textContent = `Selected: ${file.name} (${(file.size/1024/1024).toFixed(1)} MB)`;
+  if (!document.getElementById('uploadTitle').value)
+    document.getElementById('uploadTitle').value = file.name.replace(/\.[^.]+$/, '');
+};
+
+// Drag & drop wiring
+const uploadZone = document.getElementById('uploadZone');
+if (uploadZone) {
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = 'var(--gold)'; });
+  uploadZone.addEventListener('dragleave', ()  => { uploadZone.style.borderColor = ''; });
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.style.borderColor = '';
+    const file = e.dataTransfer.files[0];
+    if (file) { _selectedFile = file; document.getElementById('uploadText').textContent = `Selected: ${file.name}`; }
+  });
+}
+
+window.handleUpload = async function() {
+  if (!_selectedFile) { alert('Please select a file first.'); return; }
+
+  const btn    = document.getElementById('uploadBtn');
+  const status = document.getElementById('uploadStatus');
+  const prog   = document.getElementById('uploadProgress');
+  const bar    = document.getElementById('uploadBar');
+  const pct    = document.getElementById('uploadPct');
+
+  btn.disabled    = true;
+  btn.textContent = 'UPLOADING…';
+  prog.style.display = 'block';
+  status.textContent = '';
+
+  const meta = {
+    title      : document.getElementById('uploadTitle').value || _selectedFile.name,
+    category   : document.getElementById('uploadCategory').value,
+    artist     : document.getElementById('uploadArtist').value,
+    visibility : document.getElementById('uploadVisibility').value,
+    description: document.getElementById('uploadDesc').value,
+  };
+
+  try {
+    const ext        = _selectedFile.name.split('.').pop();
+    const type       = _selectedFile.type.startsWith('video') ? 'video' : 'image';
+    const path       = `gallery/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const storageRef = sRef(storage, path);
+
+    await new Promise((resolve, reject) => {
+      const task = uploadBytesResumable(storageRef, _selectedFile);
+      task.on('state_changed',
+        snap => {
+          const p = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+          bar.style.width = p + '%';
+          pct.textContent = p + '%';
+        },
+        reject,
+        resolve
+      );
+    });
+
+    const url = await getDownloadURL(storageRef);
+    await addDoc(collection(db, 'gallery'), {
+      url, storagePath: path, type,
+      title: meta.title, category: meta.category, artist: meta.artist,
+      visibility: meta.visibility, description: meta.description,
+      createdAt: serverTimestamp()
+    });
+
+    status.textContent    = '✓ Uploaded successfully!';
+    status.style.color    = 'var(--success)';
+    btn.textContent       = 'UPLOAD TO GALLERY';
+    btn.disabled          = false;
+    prog.style.display    = 'none';
+    bar.style.width       = '0%';
+    _selectedFile         = null;
+    document.getElementById('uploadText').textContent  = 'Drag & drop files here, or click to browse';
+    document.getElementById('uploadTitle').value       = '';
+    document.getElementById('uploadDesc').value        = '';
+    document.getElementById('fileInput').value         = '';
+  } catch (err) {
+    console.error('Upload error:', err);
+    status.textContent = '✗ Upload failed. Check console.';
+    status.style.color = '#ef4444';
+    btn.textContent    = 'UPLOAD TO GALLERY';
+    btn.disabled       = false;
+    prog.style.display = 'none';
+  }
+};
+
+// ── GALLERY ───────────────────────────────────────────────────────────────
+const PAGE_SIZE = 12;
+let _lastVisible   = null;
+let _currentFilter = 'all';
+let _galleryLoading = false;
+
+async function loadGallery(filterCategory = 'all', reset = true) {
+  if (_galleryLoading) return;
+  _galleryLoading = true;
+
+  const grid   = document.getElementById('gallery-manager-grid');
+  const loader = document.getElementById('gallery-load-more');
+
+  if (reset) {
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:2rem;text-align:center;color:var(--mid);font-size:.8rem;letter-spacing:.1em;">Loading…</div>`;
+    _lastVisible   = null;
+    _currentFilter = filterCategory;
+  }
+
+  try {
+    const col = collection(db, 'gallery');
+    let q;
+    const isFiltered = filterCategory && filterCategory !== 'all';
+
+    if (isFiltered) {
+      q = _lastVisible
+        ? query(col, where('category','==',filterCategory), orderBy('createdAt','desc'), startAfter(_lastVisible), limit(PAGE_SIZE))
+        : query(col, where('category','==',filterCategory), orderBy('createdAt','desc'), limit(PAGE_SIZE));
+    } else {
+      q = _lastVisible
+        ? query(col, orderBy('createdAt','desc'), startAfter(_lastVisible), limit(PAGE_SIZE))
+        : query(col, orderBy('createdAt','desc'), limit(PAGE_SIZE));
+    }
+
+    const snap = await getDocs(q);
+    if (reset) grid.innerHTML = '';
+
+    if (snap.empty && reset) {
+      grid.innerHTML = `<div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--mid);font-size:.85rem;">No media found. Upload some!</div>`;
+      if (loader) loader.style.display = 'none';
+      _galleryLoading = false;
+      return;
+    }
+
+    snap.forEach(docSnap => {
+      const item = docSnap.data();
+      const id   = docSnap.id;
+      const el   = document.createElement('div');
+      el.className  = 'gm-item';
+      el.dataset.id = id;
+
+      const mediaEl = item.type === 'video'
+        ? `<video class="gm-img" src="${item.url}" muted loop style="object-fit:cover;width:100%;aspect-ratio:1;"></video>`
+        : `<img class="gm-img" src="${item.url}" alt="${escHtml(item.title)}" loading="lazy"/>`;
+
+      el.innerHTML = `
+        ${mediaEl}
+        <span class="gm-tag">${escHtml(item.category)}</span>
+        <div class="gm-overlay">
+          <div style="font-family:'Inter',sans-serif;font-size:.7rem;color:rgba(255,255,255,.7);text-align:center;padding:0 .5rem;margin-bottom:.3rem;">${escHtml(item.title)}</div>
+          <button class="gm-btn del" onclick="window.deleteMedia('${id}','${item.storagePath||''}',this)">Delete</button>
+        </div>`;
+      grid.appendChild(el);
+    });
+
+    _lastVisible = snap.docs[snap.docs.length - 1];
+    const sub    = document.getElementById('gallery-sub');
+    if (sub) sub.textContent = `${grid.querySelectorAll('.gm-item').length} item(s) shown`;
+    if (loader) loader.style.display = snap.size < PAGE_SIZE ? 'none' : 'block';
+  } catch (err) {
+    console.error('Gallery load error:', err);
+    if (reset) grid.innerHTML = `<div style="grid-column:1/-1;padding:2rem;text-align:center;color:#ef4444;font-size:.8rem;">Failed to load. Check Firestore rules and indexes.</div>`;
+  }
+  _galleryLoading = false;
+}
+
+window._loadMoreGallery = function() { loadGallery(_currentFilter, false); };
+
+window.handleGalleryFilter = function(val) { loadGallery(val, true); };
+
+window.deleteMedia = async function(docId, storagePath, btn) {
+  if (!confirm('Delete this media permanently?')) return;
+  btn.textContent = '…'; btn.disabled = true;
+  try {
+    if (storagePath) {
+      try { await deleteObject(sRef(storage, storagePath)); } catch (e) { /* already gone */ }
+    }
+    await deleteDoc(doc(db, 'gallery', docId));
+    document.querySelector(`.gm-item[data-id="${docId}"]`)?.remove();
+  } catch (err) {
+    console.error('Delete error:', err);
+    alert('Delete failed. Check console.');
+    btn.textContent = 'Delete'; btn.disabled = false;
+  }
+};
+
+// ── REVIEWS ───────────────────────────────────────────────────────────────
+async function loadReviews(filter = 'all') {
+  const tbody = document.getElementById('reviews-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--mid);padding:2rem;font-size:.8rem;">Loading…</td></tr>`;
+
+  try {
+    const col = collection(db, 'reviews');
+    let q;
+    if (filter === 'pending')  q = query(col, where('status','==','pending'),  orderBy('createdAt','desc'));
+    else if (filter === 'approved') q = query(col, where('status','==','approved'), orderBy('createdAt','desc'));
+    else q = query(col, orderBy('createdAt', 'desc'));
+
+    const snap = await getDocs(q);
+    tbody.innerHTML = '';
+
+    // Update badge with pending count
+    const pendingCount = snap.docs.filter(d => d.data().status === 'pending').length;
+    const badge = document.getElementById('reviewsBadge');
+    if (badge) badge.textContent = pendingCount || '';
+
+    if (snap.empty) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--mid);padding:2rem;font-size:.8rem;">No reviews found.</td></tr>`;
+      return;
+    }
+
+    snap.forEach(docSnap => {
+      const r  = docSnap.data();
+      const id = docSnap.id;
+      const stars = '★'.repeat(r.stars||5) + '☆'.repeat(5-(r.stars||5));
+      const date  = r.createdAt?.toDate
+        ? r.createdAt.toDate().toLocaleDateString('en-IN', { month:'short', year:'numeric' })
+        : '—';
+      const isApproved = r.status === 'approved';
+
+      const tr   = document.createElement('tr');
+      tr.dataset.id = id;
+      tr.innerHTML = `
+        <td><b style="color:var(--white)">${escHtml(r.author)}</b></td>
+        <td><span class="review-stars-sm">${stars}</span></td>
+        <td style="max-width:200px;font-size:.78rem;">"${escHtml(r.text)}"</td>
+        <td>${escHtml(r.tattoo||'—')}</td>
+        <td>${date}</td>
+        <td>${isApproved ? '<span class="review-approved">Published</span>' : '<span class="review-pending">Pending</span>'}</td>
+        <td>
+          <div class="tbl-actions">
+            ${!isApproved
+              ? `<button class="tbl-btn" style="color:var(--success);border-color:rgba(34,197,94,.3)" onclick="window.approveReview('${id}',this)">Approve</button>`
+              : `<button class="tbl-btn" onclick="window.unapproveReview('${id}',this)">Unpublish</button>`}
+            <button class="tbl-btn del" onclick="window.deleteReview('${id}',this)">Reject</button>
+          </div>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error('Reviews load error:', err);
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#ef4444;padding:2rem;font-size:.8rem;">Failed to load. Check Firestore rules.</td></tr>`;
+  }
+}
+
+window.handleReviewsFilter = function(val) { loadReviews(val); };
+
+window.approveReview = async function(id, btn) {
+  btn.disabled = true; btn.textContent = '…';
+  await updateDoc(doc(db, 'reviews', id), { status: 'approved' });
+  loadReviews(document.getElementById('reviewsFilter')?.value || 'all');
+};
+
+window.unapproveReview = async function(id, btn) {
+  btn.disabled = true; btn.textContent = '…';
+  await updateDoc(doc(db, 'reviews', id), { status: 'pending' });
+  loadReviews(document.getElementById('reviewsFilter')?.value || 'all');
+};
+
+window.deleteReview = async function(id, btn) {
+  if (!confirm('Delete this review permanently?')) return;
+  btn.disabled = true; btn.textContent = '…';
+  await deleteDoc(doc(db, 'reviews', id));
+  document.querySelector(`tr[data-id="${id}"]`)?.remove();
+};
+
+window.toggleSidebar = function() {
+  document.querySelector('.sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+};
+// Auto-close sidebar on nav item click (mobile)
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      document.querySelector('.sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+  });
+});
+
+// ── Utility ───────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 </script>
 </body>
 </html>

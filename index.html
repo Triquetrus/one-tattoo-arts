@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>One Tattoo Arts — Premium Tattoo Studio, Pune</title>
+<title>One Tattoo Art — Premium Tattoo Studio, Satara</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
@@ -806,6 +806,76 @@ footer {
   .footer-grid { grid-template-columns: 1fr; }
   .process-grid { grid-template-columns: 1fr; }
 }
+
+/* ===== MOBILE FIXES ===== */
+@media (max-width: 900px) {
+  nav { padding: 1.2rem 1.5rem; }
+  .nav-links { display: none; }
+  .hero-title { font-size: clamp(4rem, 18vw, 8rem); }
+  .stats-strip { grid-template-columns: repeat(2,1fr); padding: 2rem; }
+  .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding: 1rem; }
+  .stat-item:nth-child(2n) { border-right: none; }
+  .container { padding: 0 1.5rem; }
+  .categories-header { padding: 0 1.5rem; }
+  .scroll-track { padding: 0 1.5rem 1rem; }
+  .cat-card { flex: 0 0 240px; height: 360px; }
+  .process-grid { grid-template-columns: 1fr 1fr; }
+  .artists-grid { grid-template-columns: 1fr 1fr; padding: 0 1.5rem; max-width: 100%; }
+  .gallery-masonry { columns: 2; padding: 0 1.5rem; }
+  .studio-videos { grid-template-columns: 1fr 1fr; }
+  .studio-vid-item:first-child { grid-column: span 2; min-height: 300px; }
+  .aftercare-grid { grid-template-columns: 1fr; }
+  .aftercare-left { padding: 2rem 1.5rem; }
+  .location-grid { grid-template-columns: 1fr; }
+  .map-wrap { height: 300px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; padding: 3rem 1.5rem; }
+  .chat-panel { right: 1rem; width: calc(100vw - 2rem); }
+  .reviews-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  nav { padding: 1rem 1.2rem; }
+  .logo-main { font-size: 1.4rem; }
+  .nav-cta { padding: .55rem 1.2rem; font-size: .75rem; }
+  .hero-title { font-size: clamp(3.5rem, 20vw, 6rem); }
+  .hero-subtitle { font-size: .9rem; }
+  .hero-cta-group { flex-direction: column; align-items: center; gap: 1rem; }
+  .btn-primary, .btn-outline { width: 100%; max-width: 280px; text-align: center; display: block; }
+  .stats-strip { grid-template-columns: 1fr 1fr; padding: 1.5rem 1rem; }
+  .section-title { font-size: clamp(2.5rem, 10vw, 4.5rem); }
+  .artists-grid { grid-template-columns: 1fr; }
+  .gallery-masonry { columns: 1; padding: 0 1rem; }
+  .process-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; padding: 2rem 1.2rem; }
+  .float-wrap { bottom: 1.2rem; right: 1.2rem; gap: .6rem; }
+  .chat-panel { right: .5rem; width: calc(100vw - 1rem); bottom: 5rem; }
+}
+
+.mob-menu-btn {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: none; padding: .4rem;
+}
+.mob-menu-btn span {
+  display: block; width: 24px; height: 1px; background: var(--white); transition: all .3s;
+}
+.mob-menu {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--black); z-index: 999; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2rem;
+}
+.mob-menu.open { display: flex; }
+.mob-menu a {
+  font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+  letter-spacing: .3em; color: var(--white); text-decoration: none;
+  transition: color .3s;
+}
+.mob-menu a:hover { color: var(--gold); }
+.mob-menu .mob-book {
+  font-size: 1rem; border: 1px solid var(--gold);
+  color: var(--gold); padding: .8rem 2.5rem;
+}
+@media (max-width: 900px) {
+  .mob-menu-btn { display: flex; }
+}
 </style>
 </head>
 <body>
@@ -816,9 +886,23 @@ footer {
 <!-- ===== NAV ===== -->
 <nav id="navbar">
   <a href="index.html" class="logo">
-    <span class="logo-main">ONE TATTOO</span>
-    <span class="logo-sub">Arts Studio</span>
+    <span class="logo-main">ONE TATTOO ART</span>
+    <span class="logo-sub">-Amar Sawant</span>
   </a>
+
+  <button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobMenu()" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+<div class="mob-menu" id="mobMenu">
+  <a href="#categories" onclick="toggleMobMenu()">Styles</a>
+  <a href="#artists" onclick="toggleMobMenu()">Artists</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="#studio" onclick="toggleMobMenu()">Studio</a>
+  <a href="#faq" onclick="toggleMobMenu()">FAQ</a>
+  <a href="#location" onclick="toggleMobMenu()">Location</a>
+  <a href="appointment.html" class="mob-book">BOOK NOW</a>
+</div>
+
   <ul class="nav-links">
     <li><a href="#categories">Styles</a></li>
     <li><a href="#artists">Artists</a></li>
@@ -833,14 +917,14 @@ footer {
 <!-- ===== HERO ===== -->
 <section class="hero" id="home">
   <div class="hero-video-fallback"></div>
-  <video class="hero-video" autoplay muted loop playsinline>
-    <source src="/home/triquetrus/Desktop/onetattooart/4343487-hd_1920_1080_24fps.mp4" type="video/mp4"/>
+  <video class="hero-video" id="heroVideo" autoplay muted playsinline>
+   <source id="heroVideoSrc" src="" type="video/mp4"/>
   </video>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <p class="hero-logo-top">— Est. 2015 · Satara, India —</p>
+    <p class="hero-logo-top">— Est. 2009 · Satara, India —</p>
     <div class="hero-line"></div>
-    <h1 class="hero-title">ONE<br>TATTOO<br>ARTS</h1>
+    <h1 class="hero-title">ONE<br>TATTOO<br>ART</h1>
     <p class="hero-subtitle">Where art meets skin. Permanently.</p>
     <div class="hero-divider"></div>
     <div class="hero-cta-group">
@@ -853,15 +937,36 @@ footer {
     <div class="scroll-line"></div>
   </div>
 </section>
+<script>
+(function(){
+  const HERO_VIDEOS = [
+    "assets/videos/color/yourfile.mp4",
+    "assets/videos/geometric/yourfile.mp4",
+    // ... all your real paths
+  ];
+  let currentIndex = 0;
+  const vid = document.getElementById('heroVideo');
+  const src = document.getElementById('heroVideoSrc');
 
+  function playNext() {
+    src.src = HERO_VIDEOS[currentIndex];
+    vid.load();
+    vid.play().catch(() => {});
+    currentIndex = (currentIndex + 1) % HERO_VIDEOS.length;
+  }
+
+  playNext(); // start first video
+  vid.addEventListener('ended', playNext); // auto-advance
+})();
+</script>
 <!-- ===== STATS ===== -->
 <div class="stats-strip reveal">
   <div class="stat-item">
-    <div class="stat-num">10<span>+</span></div>
+    <div class="stat-num">15<span>+</span></div>
     <div class="stat-label">Years of Artistry</div>
   </div>
   <div class="stat-item">
-    <div class="stat-num">100<span>+</span></div>
+    <div class="stat-num">500<span>+</span></div>
     <div class="stat-label">Tattoos Completed</div>
   </div>
   <div class="stat-item">
@@ -875,100 +980,96 @@ footer {
 </div>
 
 <!-- ===== CATEGORIES ===== -->
-<section class="categories-section" id="categories">
-  <div class="categories-header">
-    <div class="header-flex">
-      <div class="reveal">
-        <span class="section-label">Browse by Style</span>
-        <h2 class="section-title">TATTOO<br>STYLES</h2>
-      </div>
-      <a href="gallery.html" class="view-all-link reveal">View All Works →</a>
+<div class="scroll-track" id="scrollTrack">
+  <a href="category.html?type=blackwork" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=700&q=90" alt="Blackwork"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">01</p><h3 class="cat-name">BLACKWORK</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
     </div>
-  </div>
-  <div class="scroll-track" id="scrollTrack">
-    <a href="category.html?type=minimal" class="cat-card">
-      <img class="cat-card-bg" src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=700&q=90" alt="Minimal"/>
-      <div class="cat-card-overlay"></div>
-      <div class="cat-card-content">
-        <p class="cat-num">01</p>
-        <h3 class="cat-name">MINIMAL</h3>
-        <p class="cat-count">38 works</p>
-        <span class="cat-arrow">Explore style →</span>
-      </div>
-    </a>
-    <a href="category.html?type=geometric" class="cat-card">
-      <img class="cat-card-bg" src="https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=700&q=90" alt="Geometric"/>
-      <div class="cat-card-overlay"></div>
-      <div class="cat-card-content">
-        <p class="cat-num">02</p>
-        <h3 class="cat-name">GEOMETRIC</h3>
-        <p class="cat-count">52 works</p>
-        <span class="cat-arrow">Explore style →</span>
-      </div>
-    </a>
-    <a href="category.html?type=realism" class="cat-card">
-      <img class="cat-card-bg" src="https://images.unsplash.com/photo-1554774853-719586f82d77?w=700&q=90" alt="Realism"/>
-      <div class="cat-card-overlay"></div>
-      <div class="cat-card-content">
-        <p class="cat-num">03</p>
-        <h3 class="cat-name">REALISM</h3>
-        <p class="cat-count">44 works</p>
-        <span class="cat-arrow">Explore style →</span>
-      </div>
-    </a>
-    <a href="category.html?type=blackwork" class="cat-card">
-      <img class="cat-card-bg" src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=700&q=90" alt="Blackwork"/>
-      <div class="cat-card-overlay"></div>
-      <div class="cat-card-content">
-        <p class="cat-num">04</p>
-        <h3 class="cat-name">BLACKWORK</h3>
-        <p class="cat-count">61 works</p>
-        <span class="cat-arrow">Explore style →</span>
-      </div>
-    </a>
-    <a href="category.html?type=japanese" class="cat-card">
-      <img class="cat-card-bg" src="https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=700&q=90" alt="Japanese"/>
-      <div class="cat-card-overlay"></div>
-      <div class="cat-card-content">
-        <p class="cat-num">05</p>
-        <h3 class="cat-name">JAPANESE</h3>
-        <p class="cat-count">29 works</p>
-        <span class="cat-arrow">Explore style →</span>
-      </div>
-    </a>
-    <a href="category.html?type=fineline" class="cat-card">
-      <img class="cat-card-bg" src="https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=700&q=90" alt="Fine Line"/>
-      <div class="cat-card-overlay"></div>
-      <div class="cat-card-content">
-        <p class="cat-num">06</p>
-        <h3 class="cat-name">FINE LINE</h3>
-        <p class="cat-count">47 works</p>
-        <span class="cat-arrow">Explore style →</span>
-      </div>
-    </a>
-    <a href="category.html?type=tribal" class="cat-card">
-      <img class="cat-card-bg" src="https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=700&q=90" alt="Tribal"/>
-      <div class="cat-card-overlay"></div>
-      <div class="cat-card-content">
-        <p class="cat-num">07</p>
-        <h3 class="cat-name">TRIBAL</h3>
-        <p class="cat-count">33 works</p>
-        <span class="cat-arrow">Explore style →</span>
-      </div>
-    </a>
-    <a href="category.html?type=anime" class="cat-card">
-      <img class="cat-card-bg" src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=90" alt="Anime"/>
-      <div class="cat-card-overlay"></div>
-      <div class="cat-card-content">
-        <p class="cat-num">08</p>
-        <h3 class="cat-name">ANIME</h3>
-        <p class="cat-count">25 works</p>
-        <span class="cat-arrow">Explore style →</span>
-      </div>
-    </a>
-  </div>
-</section>
-
+  </a>
+  <a href="category.html?type=color" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=90" alt="Color"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">02</p><h3 class="cat-name">COLOR</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+  <a href="category.html?type=coverup" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=700&q=90" alt="Cover-Up"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">03</p><h3 class="cat-name">COVER-UP</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+  <a href="category.html?type=geometric" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=700&q=90" alt="Geometric"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">04</p><h3 class="cat-name">GEOMETRIC</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+  <a href="category.html?type=lettering" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=700&q=90" alt="Lettering"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">05</p><h3 class="cat-name">LETTERING</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+  <a href="category.html?type=minimalist" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=700&q=90" alt="Minimalist"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">06</p><h3 class="cat-name">MINIMALIST</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+  <a href="category.html?type=portrait" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1554774853-719586f82d77?w=700&q=90" alt="Portrait"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">07</p><h3 class="cat-name">PORTRAIT</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+  <a href="category.html?type=realism" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=700&q=90" alt="Realism"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">08</p><h3 class="cat-name">REALISM</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+  <a href="category.html?type=religious" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=700&q=90" alt="Religious"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">09</p><h3 class="cat-name">RELIGIOUS</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+  <a href="category.html?type=tribal" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=700&q=90" alt="Tribal"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">10</p><h3 class="cat-name">TRIBAL</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+  <a href="category.html?type=others" class="cat-card">
+    <img class="cat-card-bg" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=700&q=90" alt="Others"/>
+    <div class="cat-card-overlay"></div>
+    <div class="cat-card-content">
+      <p class="cat-num">11</p><h3 class="cat-name">OTHERS</h3>
+      <p class="cat-count">View works</p><span class="cat-arrow">Explore style →</span>
+    </div>
+  </a>
+</div>
 <!-- ===== PROCESS ===== -->
 <section class="process-section">
   <div class="container">
@@ -1018,13 +1119,13 @@ footer {
   <div class="artists-grid">
     <div class="artist-card reveal">
       <div class="artist-img-wrap">
-        <img class="artist-img" src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=700&q=85" alt="Alex Noir"/>
-        <span class="artist-badge">Lead Artist</span>
+        <img class="artist-img" src="https://res.cloudinary.com/dc2e14v5j/image/upload/v1775328736/WhatsApp_Image_2026-04-04_at_8.24.07_AM_vzzbhy.jpg" alt="Alex Noir"/>
+        <span class="artist-badge">OWNER/Lead Artist</span>
       </div>
       <div class="artist-info">
-        <p class="artist-name">ALEX NOIR</p>
-        <p class="artist-specialty">Blackwork & Geometric</p>
-        <p class="artist-bio">Master of sacred geometry and bold blackwork. Alex transforms skin into living architecture — precise, powerful, permanent. 8 years of practice across India and Japan.</p>
+        <p class="artist-name">Amar Sawant</p>
+        <p class="artist-specialty">All Categories</p>
+        <p class="artist-bio">Amar is skilled in all tattoo styles — from traditional to modern, realism to minimalism, they can bring any idea to life.</p>
         <div class="artist-social">
           <a href="#" class="artist-soc">IG</a>
           <a href="#" class="artist-soc">BE</a>
@@ -1170,7 +1271,7 @@ footer {
       <div>
         <span class="section-label">Behind The Ink</span>
         <h2 class="section-title">STUDIO<br>EXPERIENCE</h2>
-        <p class="section-body">Step inside One Tattoo Arts — a sanctuary built for precision, comfort, and uncompromising artistry.</p>
+        <p class="section-body">Step inside One Tattoo Art — a sanctuary built for precision, comfort, and uncompromising artistry.</p>
       </div>
     </div>
     <div class="studio-videos reveal">
@@ -1295,7 +1396,7 @@ footer {
           <div class="faq-a">Surface healing typically completes in 2–3 weeks. Full skin-depth healing takes 3–6 months. During this time, you may notice peeling, itching, and slight color fading — all completely normal. Avoid sun exposure and keep the area moisturized for optimal long-term results.</div>
         </div>
         <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-q">What does a tattoo at One Tattoo Arts cost? <span class="faq-icon">+</span></div>
+          <div class="faq-q">What does a tattoo at One Tattoo Art cost? <span class="faq-icon">+</span></div>
           <div class="faq-a">All tattoos start at ₹3,000 for small, simple designs. Final pricing depends on size, complexity, placement, color, and your chosen artist. Large or full-day sessions are quoted individually. We offer free in-person or video consultations to provide an accurate, personalized quote with no surprises.</div>
         </div>
         <div class="faq-item" onclick="toggleFAQ(this)">
@@ -1353,14 +1454,14 @@ footer {
       </div>
       <div class="review-card">
         <div class="review-stars">★★★★★</div>
-        <p class="review-text">"Zara created an anime tattoo that makes everyone stop and stare. The colors are vibrant, the linework is crisp, and the whole experience was professional from start to finish. One Tattoo Arts is in a class of their own."</p>
+        <p class="review-text">"Zara created an anime tattoo that makes everyone stop and stare. The colors are vibrant, the linework is crisp, and the whole experience was professional from start to finish. One Tattoo Art is in a class of their own."</p>
         <p class="review-author">ARJUN KAPOOR</p>
         <p class="review-tattoo">Anime Character Full Color — Zara Ink</p>
         <p class="review-meta">Google Review · December 2025</p>
       </div>
       <div class="review-card">
         <div class="review-stars">★★★★★</div>
-        <p class="review-text">"I've been to studios across the country and One Tattoo Arts is simply the best. The hygiene standards are impeccable, the artists are world-class, and the aftercare support is unmatched. My black and grey piece healed perfectly."</p>
+        <p class="review-text">"I've been to studios across the country and One Tattoo Art is simply the best. The hygiene standards are impeccable, the artists are world-class, and the aftercare support is unmatched. My black and grey piece healed perfectly."</p>
         <p class="review-author">MEERA NAIR</p>
         <p class="review-tattoo">Black & Grey Floral — Alex Noir</p>
         <p class="review-meta">Google Review · November 2025</p>
@@ -1383,20 +1484,19 @@ footer {
       <span class="section-label">Find Us</span>
       <h2 class="section-title">LOCATION</h2>
       <p class="location-address">
-        Studio No. 7, The Ink Complex<br/>
-        MG Road, Camp, Pune<br/>
-        Maharashtra — 411 001
+        Shop no.3,Balaji Prestige<br/>
+        Opp.Sayali hotel,Powai naka<br/>
+        Satara - 415001
       </p>
       <div style="margin-top: 2.5rem; margin-bottom: 2.5rem;">
-        <p class="hours-row"><span class="hours-day">Tuesday – Friday</span><span class="hours-time">11:00 AM – 8:00 PM</span></p>
-        <p class="hours-row"><span class="hours-day">Saturday – Sunday</span><span class="hours-time">10:00 AM – 9:00 PM</span></p>
-        <p class="hours-row" style="border-bottom: none;"><span class="hours-day">Monday</span><span class="hours-time" style="color:var(--mid);">Closed</span></p>
+        <p class="hours-row"><span class="hours-day">Sunday – Wednesday</span><span class="hours-time">10:00 AM – 9:00 PM</span></p>
+        <p class="hours-row"><span class="hours-day">Thursday – Friday</span><span class="hours-time">10:00 AM – 10:00 PM</span></p>
+        <p class="hours-row" style="border-bottom: none;"><span class="hours-day">Saturday</span><span class="hours-time" style="color:var(--mid);">Closed</span></p>
       </div>
       <a href="appointment.html" class="btn-primary" style="display:inline-block;"><span>BOOK YOUR SESSION</span></a>
     </div>
     <div class="map-wrap">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242118.04274296478!2d73.72820999999999!3d18.524701!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf2e67461101%3A0x828d43bf9d9ee343!2sPune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1680000000000" allowfullscreen="" loading="lazy"></iframe>
-    </div>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d475.1543764690413!2d74.00376672936082!3d17.686354827373012!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc23994f2dc008d%3A0x5a33393ef27ed422!2sOne%20Tattoo%20Art!5e0!3m2!1sen!2sin!4v1775312428022!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>       </div>
   </div>
 </section>
 
@@ -1405,14 +1505,15 @@ footer {
   <div class="footer-grid">
     <div>
       <p class="f-logo-main">ONE TATTOO</p>
-      <p class="f-logo-sub">Arts Studio</p>
-      <p class="f-tagline">Premium tattoo artistry rooted in tradition,<br/>elevated by uncompromising craft and vision.<br/>Pune's finest since 2015.</p>
+      <p class="f-logo-sub">Art Studio</p>
+      <p class="f-tagline">Premium tattoo artistry rooted in tradition,<br/>elevated by uncompromising craft and vision.<br/>Satara's finest since 2009.</p>
       <div class="f-social">
-        <a href="#" class="soc">IG</a>
-        <a href="#" class="soc">FB</a>
-        <a href="#" class="soc">YT</a>
-        <a href="#" class="soc">TT</a>
-      </div>
+       <a href="https://www.instagram.com/amar1tattoo?igsh=a3k4c2JjMzZkdzM2" target="_blank" class="soc" title="Instagram">IG</a>
+       <a href="https://g.co/kgs/JHWCHEu" target="_blank" class="soc" title="Google">G</a>
+       <a href="https://x.com/intent/post?url=https%3A%2F%2Fshare.google%2F4j7KzKriHQVbxrDmq" target="_blank" class="soc" title="twitter">X</a>
+       <a href="https://youtube.com/@onetattooart?si=kHp4-QXXbMBdd6IT" target="_blank" class="soc" title="YouTube">YT</a>
+       <a href="https://wa.me/09595818147" target="_blank" class="soc" title="WhatsApp">WA</a>
+</div>
     </div>
     <div>
       <p class="f-col-title">Navigate</p>
@@ -1428,25 +1529,24 @@ footer {
     <div>
       <p class="f-col-title">Info</p>
       <ul class="f-links">
-        <li><a href="#aftercare">Aftercare Guide</a></li>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Terms of Service</a></li>
-        <li><a href="#">Press & Media</a></li>
-        <li><a href="#">Careers</a></li>
+        <li><a href="https://tattooaftercare.info/">Aftercare Guide</a></li>
+        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+        <li><a href="terms&conditions.html">Terms of Service</a></li>
+        <li><a href="">Careers</a></li>
       </ul>
     </div>
     <div>
       <p class="f-col-title">Contact</p>
       <ul class="f-links">
         <li><a href="mailto:hello@onetattooarts.com">hello@onetattooarts.com</a></li>
-        <li><a href="tel:+912012345678">+91 20 1234 5678</a></li>
-        <li><a href="https://wa.me/912012345678" target="_blank">WhatsApp Us</a></li>
+        <li><a href="tel:+919595818147">+919595818147 </a></li>
+        <li><a href="https://wa.me/9595818147" target="_blank">WhatsApp Us</a></li>
         <li><a href="appointment.html">Book Appointment</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <p class="f-copy">© 2026 One Tattoo Arts. All rights reserved. Crafted with precision in Pune.</p>
+    <p class="f-copy">© 2026 One Tattoo Art. All rights reserved. Crafted with precision in Pune.</p>
     <a href="admin.html" class="admin-link">Admin Portal</a>
   </div>
 </footer>
@@ -1456,7 +1556,7 @@ footer {
   <button class="chat-btn" onclick="toggleChat()" id="chatToggle">
     <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
   </button>
-  <a href="https://wa.me/912012345678" target="_blank" class="wa-btn">
+  <a href="https://wa.me/919595818147" target="_blank" class="wa-btn">
     <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </a>
 </div>
@@ -1465,13 +1565,13 @@ footer {
 <div class="chat-panel" id="chatPanel">
   <div class="chat-head">
     <div class="chat-head-left">
-      <div class="chat-head-title">ONE TATTOO ARTS</div>
+      <div class="chat-head-title">ONE TATTOO ART</div>
       <div class="chat-head-sub"><span class="online-dot"></span>Usually replies in minutes</div>
     </div>
     <button class="chat-close" onclick="toggleChat()">×</button>
   </div>
   <div class="chat-msgs" id="chatMsgs">
-    <div class="chat-msg bot">Hey there! 👋 Welcome to One Tattoo Arts. I'm here to help you with any questions about our studio, artists, or booking.</div>
+    <div class="chat-msg bot">Hey there! 👋 Welcome to One Tattoo Art. I'm here to help you with any questions about our studio, artists, or booking.</div>
     <div class="chat-msg bot">What brings you in today?</div>
   </div>
   <div class="chat-input-wrap">
@@ -1502,6 +1602,21 @@ document.addEventListener('mousemove', e => {
   }, 80);
 });
 
+function toggleMobMenu() {
+  document.getElementById('mobMenu').classList.toggle('open');
+}
+
+// Auto-scroll categories
+const track = document.getElementById('scrollTrack');
+let autoScrollPaused = false;
+track.addEventListener('mouseenter', () => autoScrollPaused = true);
+track.addEventListener('mouseleave', () => autoScrollPaused = false);
+setInterval(() => {
+  if (autoScrollPaused) return;
+  track.scrollLeft += 1;
+  if (track.scrollLeft >= track.scrollWidth - track.clientWidth) track.scrollLeft = 0;
+}, 20);
+
 // Navbar scroll
 window.addEventListener('scroll', () => {
   document.getElementById('navbar').classList.toggle('scrolled', scrollY > 80);
@@ -1514,7 +1629,6 @@ const obs = new IntersectionObserver(entries => {
 document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(r => obs.observe(r));
 
 // Horizontal drag scroll
-const track = document.getElementById('scrollTrack');
 let drag = false, sx, sl;
 track.addEventListener('mousedown', e => {
   drag = true; sx = e.pageX - track.offsetLeft; sl = track.scrollLeft;
@@ -1533,6 +1647,48 @@ function toggleFAQ(el) { el.classList.toggle('open'); }
 const chatState = { step: 'main', style: null };
 
 const chatResponses = {
+  aftercare_general: {
+    msg: "Great question! Here's the aftercare summary:\n\n• Keep it covered for 2–4 hours after the session\n• Gently wash with fragrance-free soap, pat dry\n• Apply a thin layer of unscented moisturizer (Bepanthen or coconut oil)\n• DO NOT scratch, pick, or rub\n• Avoid direct sunlight for 3–4 weeks\n• No swimming, sauna, or soaking for 3 weeks\n\nWe'll give you a full printed aftercare card after your session.",
+    opts: [
+      { label: "When will it fully heal?", step: 'healing' },
+      { label: "What products to use?", step: 'aftercare_products' },
+      { label: "Can I go to the gym?", step: 'aftercare_gym' },
+      { label: "← Back to menu", step: 'main' }
+    ]
+  },
+  aftercare_products: {
+    msg: "We recommend:\n\n✓ Bepanthen (nappy rash cream) — best for first 2 weeks\n✓ Unscented coconut oil\n✓ Lubriderm / CeraVe unscented lotion\n\nAvoid: Vaseline, Neosporin, scented lotions, sunscreen on fresh tattoo.",
+    opts: [
+      { label: "When can I use sunscreen?", step: 'aftercare_sun' },
+      { label: "← Back", step: 'aftercare_general' }
+    ]
+  },
+  aftercare_sun: {
+    msg: "Wait at least 4 weeks before applying sunscreen on your tattoo. After it's fully healed, always use SPF 50+ to protect the ink from fading. Direct UV is the #1 cause of tattoo fading over time.",
+    opts: [
+      { label: "← Back to aftercare", step: 'aftercare_general' },
+      { label: "Book a session →", step: 'booking_confirm' }
+    ]
+  },
+  aftercare_gym: {
+    msg: "You can do light activity after 48 hours, but avoid heavy sweating, friction, or stretching on the tattooed area for at least 2 weeks. No swimming or contact sports for 3 weeks.",
+    opts: [
+      { label: "← Back to aftercare", step: 'aftercare_general' }
+    ]
+  },
+  aftercare_peeling: {
+    msg: "Peeling and flaking in week 2 is completely normal — it means your skin is healing. Do NOT pick the peeling skin. The colour may look dull underneath — this is temporary. The final result shows after full healing (3–6 months).",
+    opts: [
+      { label: "← Back to aftercare", step: 'aftercare_general' }
+    ]
+  },
+  touch_up: {
+    msg: "We offer one free touch-up within 3 months of your session if the tattoo needs it (patchy healing, ink drop-outs). After 3 months, touch-ups are charged at our minimum rate. Bring your aftercare card when you visit.",
+    opts: [
+      { label: "Book a session →", step: 'booking_confirm' },
+      { label: "← Back", step: 'main' }
+    ]
+  },
   booking: {
     msg: "Great! To book a session, I just need a few details. What style of tattoo are you thinking?",
     opts: [
@@ -1591,7 +1747,7 @@ const chatResponses = {
     ]
   },
   pricing: {
-    msg: "Pricing starts at ₹3,000 for small, simple designs. Here's a rough guide:\n\n• Small (under 3 inches): ₹3,000–7,000\n• Medium piece: ₹8,000–20,000\n• Large / sleeve: ₹25,000–80,000+\n\nFull-day sessions are quoted individually. Free consultations include an accurate quote.",
+    msg: "Pricing start at ₹3,000 for small, simple designs. Here's a rough guide:\n\n• Small (under 3 inches): ₹3,000–7,000\n• Medium piece: ₹8,000–20,000\n• Large / sleeve: ₹25,000–80,000+\n\nFull-day sessions are quoted individually. Free consultations include an accurate quote.",
     opts: [
       { label: "Book a free consultation", step: 'booking_consult', val: null },
       { label: "Ask about deposits", step: 'deposit', val: null }
@@ -1662,7 +1818,9 @@ function resetChat() {
     { label: "📅 I want to book a session", step: 'booking' },
     { label: "🎨 Help me choose a style", step: 'style' },
     { label: "❓ Does it hurt?", step: 'pain' },
-    { label: "💰 Pricing information", step: 'pricing' }
+    { label: "💰 Pricing information", step: 'pricing' },
+    { label: "🩹 Aftercare guide", step: 'aftercare_general' },
+    { label: "🔄 Touch-up policy", step: 'touch_up' }
   ]);
 }
 
@@ -1708,6 +1866,10 @@ function sendChat() {
   else if (lower.includes('heal') || lower.includes('after')) responseStep = 'healing';
   else if (lower.includes('style') || lower.includes('design') || lower.includes('type')) responseStep = 'style';
   else if (lower.includes('deposit')) responseStep = 'deposit';
+  else if (lower.includes('aftercare') || lower.includes('care') || lower.includes('moistur') || lower.includes('peel') || lower.includes('itch')) responseStep = 'aftercare_general';
+  else if (lower.includes('touch') || lower.includes('fad') || lower.includes('patch')) responseStep = 'touch_up';
+  else if (lower.includes('gym') || lower.includes('swim') || lower.includes('sport') || lower.includes('exercise')) responseStep = 'aftercare_gym';
+  else if (lower.includes('sun') || lower.includes('spf')) responseStep = 'aftercare_sun'; 
 
   const typing = showTyping();
   setTimeout(() => {

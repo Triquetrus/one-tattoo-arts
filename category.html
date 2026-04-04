@@ -1,71 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Category — One Tattoo Arts</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Category — One Tattoo Art</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  :root{--black:#080808;--white:#f2ede7;--red:#7a1515;--grey:#161616;--mid:#404040;--light:#a09890;--border:rgba(255,255,255,0.07);}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--black);color:var(--white);font-family:'EB Garamond',serif;cursor:none;overflow-x:hidden;}
-  .cursor{position:fixed;width:10px;height:10px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
-  .cursor-ring{position:fixed;width:38px;height:38px;border:1px solid rgba(242,237,231,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .12s ease;}
-  nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 4rem;background:rgba(8,8,8,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-  .logo{text-decoration:none;display:flex;flex-direction:column;line-height:1;}
-  .logo-main{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.35em;color:var(--white);}
-  .logo-sub{font-family:'Playfair Display',serif;font-style:italic;font-size:.72rem;letter-spacing:.25em;color:var(--light);}
-  .nav-links{display:flex;gap:2.5rem;list-style:none;}
-  .nav-links a{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--light);text-decoration:none;transition:color .3s;}
-  .nav-links a:hover{color:var(--white);}
-  .nav-cta{font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:.25em;border:1px solid var(--white);color:var(--white);padding:.7rem 1.8rem;text-decoration:none;transition:all .3s;}
-  .nav-cta:hover{background:var(--white);color:var(--black);}
+:root {
+  --black:#050505; --white:#f0ebe3; --red:#8b1c1c; --red-light:#b52424;
+  --grey:#0f0f0f; --grey2:#161616; --mid:#3a3a3a; --light:#9a9088;
+  --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.12); --gold:#c9a96e;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{background:var(--black);color:var(--white);font-family:'Inter',sans-serif;cursor:none;overflow-x:hidden;}
 
-  .cat-hero{height:70vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-  .cat-hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(55%);}
-  .cat-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,8,8,.25),rgba(8,8,8,.82));z-index:1;}
-  .cat-hero-content{position:relative;z-index:2;text-align:center;}
-  .breadcrumb{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;letter-spacing:.2em;color:var(--light);margin-bottom:1.5rem;}
-  .breadcrumb a{color:var(--light);text-decoration:none;transition:color .3s;}
-  .breadcrumb a:hover{color:var(--white);}
-  .cat-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,11vw,10rem);letter-spacing:.05em;color:var(--white);line-height:1;}
-  .cat-desc{font-family:'Playfair Display',serif;font-style:italic;font-size:1.2rem;color:var(--light);margin-top:1.2rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.78;}
+/* ── CURSOR ── */
+.cursor{position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:transform .1s,width .3s,height .3s;}
+.cursor-ring{position:fixed;width:40px;height:40px;border:1px solid rgba(240,235,227,.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .15s ease;}
 
-  .cat-nav{display:flex;justify-content:center;gap:.3rem;flex-wrap:wrap;padding:3rem 4rem 2rem;border-bottom:1px solid var(--border);}
-  .cat-nav-btn{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;letter-spacing:.12em;border:none;background:none;color:var(--light);padding:.5rem 1.3rem;cursor:pointer;text-decoration:none;display:inline-block;position:relative;transition:color .3s;}
-  .cat-nav-btn::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:1px;background:var(--white);transition:left .3s,right .3s;}
-  .cat-nav-btn.active,.cat-nav-btn:hover{color:var(--white);}
-  .cat-nav-btn.active::after,.cat-nav-btn:hover::after{left:0;right:0;}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.2rem 5rem;background:rgba(5,5,5,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1;}
+.logo-main{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.4em;color:var(--white);}
+.logo-sub{font-family:'Playfair Display',serif;font-style:italic;font-size:.72rem;letter-spacing:.3em;color:var(--light);margin-top:.15rem;}
+.nav-links{display:flex;gap:2.8rem;list-style:none;}
+.nav-links a{font-family:'Inter',sans-serif;font-weight:300;font-size:.82rem;letter-spacing:.15em;text-transform:uppercase;color:var(--light);text-decoration:none;transition:color .3s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s;}
+.nav-links a:hover{color:var(--white);}
+.nav-links a:hover::after{width:100%;}
+.nav-cta{font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:.3em;border:1px solid rgba(255,255,255,.5);color:var(--white);padding:.7rem 2rem;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;}
+.nav-cta::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .4s ease;}
+.nav-cta:hover::before{transform:translateX(0);}
+.nav-cta:hover{border-color:var(--gold);color:var(--black);}
+.nav-cta span{position:relative;z-index:1;}
+.mob-menu-btn{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px;}
+.mob-menu-btn span{display:block;width:24px;height:1px;background:var(--white);transition:all .3s;}
+.mob-menu{display:none;position:fixed;inset:0;top:70px;background:rgba(5,5,5,.98);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;}
+.mob-menu.open{display:flex;}
+.mob-menu a{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.3em;color:var(--white);text-decoration:none;}
+.mob-book{border:1px solid var(--gold)!important;color:var(--gold)!important;padding:.8rem 3rem;margin-top:1rem;}
 
-  .cat-grid{columns:3;gap:4px;padding:3rem 4rem;}
-  .cat-grid-item{break-inside:avoid;margin-bottom:4px;position:relative;overflow:hidden;cursor:pointer;}
-  .cat-grid-item video,.cat-grid-item img{width:100%;display:block;filter:grayscale(55%);transition:filter .5s,transform .5s;}
-  .cat-grid-item:hover video,.cat-grid-item:hover img{filter:grayscale(0%);transform:scale(1.04);}
-  .g-overlay{position:absolute;inset:0;background:rgba(8,8,8,0);transition:background .4s;display:flex;align-items:center;justify-content:center;}
-  .cat-grid-item:hover .g-overlay{background:rgba(8,8,8,.45);}
-  .g-view{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.3em;color:white;opacity:0;transition:opacity .4s;}
-  .cat-grid-item:hover .g-view{opacity:1;}
-  .vid-badge{position:absolute;top:.7rem;left:.7rem;background:rgba(8,8,8,.75);border:1px solid rgba(255,255,255,.2);font-family:'Playfair Display',serif;font-style:italic;font-size:.75rem;color:var(--light);padding:.2rem .6rem;z-index:2;}
+/* ── HERO ── */
+.cat-hero{height:75vh;min-height:500px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.cat-hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(45%) brightness(.85);transition:filter 1.2s ease;}
+.cat-hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;display:none;}
+.cat-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(5,5,5,.2) 0%,rgba(5,5,5,0) 40%,rgba(5,5,5,.92) 100%);}
+.cat-hero-content{position:relative;z-index:2;text-align:center;padding:0 2rem;}
+.breadcrumb{font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;letter-spacing:.25em;text-transform:uppercase;color:var(--light);margin-bottom:2rem;opacity:0;animation:fadeUp .8s .3s forwards;}
+.breadcrumb a{color:var(--light);text-decoration:none;transition:color .3s;}
+.breadcrumb a:hover{color:var(--gold);}
+.cat-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,13vw,12rem);letter-spacing:.04em;color:var(--white);line-height:.92;opacity:0;animation:fadeUp .8s .5s forwards;}
+.cat-desc{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1rem,1.8vw,1.3rem);color:var(--light);margin-top:1.5rem;max-width:540px;margin-left:auto;margin-right:auto;line-height:1.8;opacity:0;animation:fadeUp .8s .7s forwards;}
+.cat-divider{width:60px;height:1px;background:var(--gold);margin:1.5rem auto 0;opacity:0;animation:fadeIn .8s .9s forwards;}
 
-  .book-cta{text-align:center;padding:4rem 4rem 6rem;border-top:1px solid var(--border);}
-  .book-cta p{font-family:'Playfair Display',serif;font-style:italic;font-size:1.2rem;color:var(--light);margin-bottom:2rem;letter-spacing:.05em;}
-  .book-btn{display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.4em;border:1px solid var(--white);color:var(--white);padding:1.2rem 4rem;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;}
-  .book-btn::before{content:'';position:absolute;inset:0;background:var(--white);transform:translateX(-101%);transition:transform .4s;}
-  .book-btn:hover::before{transform:translateX(0);}
-  .book-btn span{position:relative;z-index:1;transition:color .4s;}
-  .book-btn:hover span{color:var(--black);}
-  .float-wrap{position:fixed;bottom:2rem;right:2rem;z-index:500;}
-  .wa-btn{width:50px;height:50px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;}
-  .wa-btn svg{width:24px;height:24px;fill:white;}
-  @media(max-width:768px){.cat-grid{columns:2;padding:2rem 1rem;}.cat-nav{padding:2rem 1rem 1.5rem;}nav{padding:.9rem 1.5rem;}.nav-links{display:none;}}
+/* ── FILTER NAV ── */
+.cat-nav{display:flex;justify-content:center;gap:.3rem;flex-wrap:wrap;padding:2.5rem 5rem 2rem;border-bottom:1px solid var(--border);background:var(--black);}
+.cat-nav-btn{font-family:'Inter',sans-serif;font-weight:300;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid transparent;background:none;color:var(--light);padding:.5rem 1.2rem;cursor:pointer;text-decoration:none;display:inline-block;transition:all .3s;}
+.cat-nav-btn:hover{color:var(--white);border-color:rgba(255,255,255,.12);}
+.cat-nav-btn.active{border-color:var(--gold);color:var(--gold);}
+
+/* ── GRID ── */
+.grid-wrap{padding:3rem 4rem 0;}
+.cat-grid{columns:3;gap:5px;}
+.cat-grid-item{break-inside:avoid;margin-bottom:5px;position:relative;overflow:hidden;cursor:pointer;opacity:0;animation:fadeIn .6s forwards;}
+.cat-grid-item video,.cat-grid-item img{width:100%;display:block;filter:grayscale(55%);transition:filter .5s,transform .6s;}
+.cat-grid-item:hover video,.cat-grid-item:hover img{filter:grayscale(0%);transform:scale(1.05);}
+.g-overlay{position:absolute;inset:0;background:rgba(5,5,5,0);transition:background .4s;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;}
+.cat-grid-item:hover .g-overlay{background:rgba(5,5,5,.5);}
+.g-tag{font-family:'Inter',sans-serif;font-weight:400;font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:white;opacity:0;transition:opacity .4s;background:var(--red);padding:.22rem .7rem;}
+.g-view{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.25em;color:white;opacity:0;transition:opacity .4s;}
+.cat-grid-item:hover .g-tag,.cat-grid-item:hover .g-view{opacity:1;}
+.vid-badge{position:absolute;top:.7rem;left:.7rem;background:rgba(5,5,5,.8);border:1px solid rgba(255,255,255,.15);font-family:'Inter',sans-serif;font-weight:300;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--light);padding:.2rem .6rem;z-index:2;}
+.empty-msg{text-align:center;padding:6rem 2rem;color:var(--light);font-family:'Playfair Display',serif;font-style:italic;font-size:1.2rem;column-span:all;}
+
+/* ── MODAL ── */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:2000;display:none;align-items:center;justify-content:center;padding:2rem;}
+.modal.open{display:flex;animation:fadeIn .3s ease;}
+.modal-inner{position:relative;max-width:900px;width:100%;max-height:92vh;}
+.modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.modal-cat{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;letter-spacing:.2em;color:var(--gold);}
+.modal-close{background:none;border:1px solid rgba(255,255,255,.15);color:var(--white);cursor:pointer;font-family:'Inter',sans-serif;font-weight:300;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;padding:.5rem 1.2rem;transition:all .3s;}
+.modal-close:hover{border-color:var(--white);}
+.modal-media{width:100%;max-height:80vh;object-fit:contain;display:block;}
+.modal-bottom{padding:1rem 0 0;display:flex;justify-content:space-between;align-items:center;}
+.modal-info{font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;letter-spacing:.1em;color:var(--mid);}
+.modal-nav{display:flex;gap:.5rem;}
+.modal-nav button{background:none;border:1px solid rgba(255,255,255,.15);color:var(--white);font-family:'Inter',sans-serif;font-weight:300;font-size:.72rem;letter-spacing:.15em;padding:.5rem 1.2rem;cursor:pointer;transition:all .3s;}
+.modal-nav button:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── CTA ── */
+.book-cta{text-align:center;padding:5rem 4rem 6rem;border-top:1px solid var(--border);}
+.book-cta p{font-family:'Playfair Display',serif;font-style:italic;font-size:1.2rem;color:var(--light);margin-bottom:2rem;letter-spacing:.05em;}
+.book-btn{display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.4em;border:1px solid rgba(255,255,255,.5);color:var(--white);padding:1.1rem 4rem;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;}
+.book-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .4s;}
+.book-btn:hover::before{transform:translateX(0);}
+.book-btn:hover{border-color:var(--gold);color:var(--black);}
+.book-btn span{position:relative;z-index:1;}
+
+/* ── FOOTER ── */
+footer{background:var(--black);border-top:1px solid var(--border);padding:2.5rem 5rem;display:flex;justify-content:space-between;align-items:center;}
+.f-copy{font-family:'Inter',sans-serif;font-weight:300;font-size:.78rem;color:var(--mid);letter-spacing:.1em;}
+.f-back{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.3em;color:var(--white);text-decoration:none;transition:color .3s;}
+.f-back:hover{color:var(--gold);}
+
+/* ── FLOAT ── */
+.wa-btn{position:fixed;bottom:2.5rem;right:2.5rem;width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.3);transition:transform .3s;z-index:500;}
+.wa-btn:hover{transform:scale(1.1);}
+.wa-btn svg{width:26px;height:26px;fill:white;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  nav{padding:1rem 2rem;}
+  .nav-links{display:none;}
+  .mob-menu-btn{display:flex;}
+  .cat-grid{columns:2;}
+  .grid-wrap{padding:2rem 1.5rem 0;}
+  .cat-nav{padding:1.5rem 1.5rem 1rem;}
+  footer{padding:2rem;flex-direction:column;gap:1rem;text-align:center;}
+  .book-cta{padding:4rem 2rem 5rem;}
+}
+@media(max-width:500px){.cat-grid{columns:1;}}
 </style>
 </head>
 <body>
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
 <nav>
-  <a href="index.html" class="logo"><span class="logo-main">ONE TATTOO</span><span class="logo-sub">Arts Studio</span></a>
+  <a href="index.html" class="logo">
+    <span class="logo-main">ONE TATTOO</span>
+    <span class="logo-sub">Art Studio</span>
+  </a>
+  <button class="mob-menu-btn" onclick="toggleMob()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
   <ul class="nav-links">
     <li><a href="index.html#categories">Styles</a></li>
     <li><a href="index.html#artists">Artists</a></li>
@@ -73,110 +149,383 @@
     <li><a href="index.html#faq">FAQ</a></li>
     <li><a href="index.html#location">Location</a></li>
   </ul>
-  <a href="appointment.html" class="nav-cta">Book Now</a>
+  <a href="appointment.html" class="nav-cta"><span>Book Now</span></a>
 </nav>
+<div class="mob-menu" id="mobMenu">
+  <a href="index.html#categories" onclick="toggleMob()">Styles</a>
+  <a href="index.html#artists" onclick="toggleMob()">Artists</a>
+  <a href="gallery.html" onclick="toggleMob()">Gallery</a>
+  <a href="index.html#faq" onclick="toggleMob()">FAQ</a>
+  <a href="index.html#location" onclick="toggleMob()">Location</a>
+  <a href="appointment.html" class="mob-book" onclick="toggleMob()">BOOK NOW</a>
+</div>
 
+<!-- HERO -->
 <div class="cat-hero">
-  <video class="cat-hero-bg" autoplay muted loop playsinline id="heroBgVid" style="z-index:0;display:none;">
-    <source src="" type="video/mp4"/>
+  <video class="cat-hero-video" id="heroBgVid" autoplay muted loop playsinline>
+    <source id="heroBgVidSrc" src="" type="video/mp4"/>
   </video>
-  <img class="cat-hero-bg" id="heroBg" src="" alt="" style="z-index:0;"/>
+  <img class="cat-hero-bg" id="heroBg" src="" alt=""/>
   <div class="cat-hero-overlay"></div>
   <div class="cat-hero-content">
-    <p class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="index.html#categories">Styles</a> &nbsp;/&nbsp; <span id="bcType">—</span></p>
+    <p class="breadcrumb">
+      <a href="index.html">Home</a> &nbsp;/&nbsp;
+      <a href="index.html#categories">Styles</a> &nbsp;/&nbsp;
+      <span id="bcType">—</span>
+    </p>
     <h1 class="cat-title" id="catTitle">—</h1>
     <p class="cat-desc" id="catDesc"></p>
+    <div class="cat-divider"></div>
   </div>
 </div>
 
-<div class="cat-nav">
-  <a href="category.html?type=minimal" class="cat-nav-btn">Minimal</a>
-  <a href="category.html?type=geometric" class="cat-nav-btn">Geometric</a>
-  <a href="category.html?type=anime" class="cat-nav-btn">Anime</a>
-  <a href="category.html?type=tribal" class="cat-nav-btn">Tribal</a>
-  <a href="category.html?type=realism" class="cat-nav-btn">Realism</a>
+<!-- CATEGORY NAV -->
+<div class="cat-nav" id="catNav">
+  <a href="category.html?type=blackwork"  class="cat-nav-btn">Blackwork</a>
+  <a href="category.html?type=color"      class="cat-nav-btn">Color</a>
+  <a href="category.html?type=coverup"    class="cat-nav-btn">Cover-Up</a>
+  <a href="category.html?type=geometric"  class="cat-nav-btn">Geometric</a>
+  <a href="category.html?type=lettering"  class="cat-nav-btn">Lettering</a>
+  <a href="category.html?type=minimalist" class="cat-nav-btn">Minimalist</a>
+  <a href="category.html?type=portrait"   class="cat-nav-btn">Portrait</a>
+  <a href="category.html?type=realism"    class="cat-nav-btn">Realism</a>
+  <a href="category.html?type=religious"  class="cat-nav-btn">Religious</a>
+  <a href="category.html?type=tribal"     class="cat-nav-btn">Tribal</a>
+  <a href="category.html?type=others"     class="cat-nav-btn">Others</a>
 </div>
 
-<div class="cat-grid" id="catGrid"></div>
+<!-- GRID -->
+<div class="grid-wrap">
+  <div class="cat-grid" id="catGrid">
+    <div class="empty-msg" id="gridLoading">Loading…</div>
+  </div>
+</div>
 
+<!-- CTA -->
 <div class="book-cta">
   <p>Love what you see? Let's create your piece together.</p>
   <a href="appointment.html" class="book-btn"><span>BOOK YOUR APPOINTMENT</span></a>
 </div>
 
-<div style="border-top:1px solid var(--border);padding:2rem 4rem;display:flex;justify-content:space-between;align-items:center;">
-  <a href="index.html" style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.35em;color:var(--white);text-decoration:none;">ONE TATTOO ARTS</a>
-  <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;color:var(--mid);">© 2026 One Tattoo Arts. All rights reserved.</p>
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal-inner">
+    <div class="modal-top">
+      <span class="modal-cat" id="modalCat">—</span>
+      <button class="modal-close" onclick="closeModal()">× Close</button>
+    </div>
+    <img class="modal-media" id="modalImg" src="" alt="" style="display:none;"/>
+    <video class="modal-media" id="modalVid" src="" controls style="display:none;"></video>
+    <div class="modal-bottom">
+      <span class="modal-info">One Tattoo Art Studio — Satara</span>
+      <div class="modal-nav">
+        <button onclick="prevImg()">← Prev</button>
+        <button onclick="nextImg()">Next →</button>
+      </div>
+    </div>
+  </div>
 </div>
-<div class="float-wrap"><a href="https://wa.me/912012345678" target="_blank" class="wa-btn"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a></div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="index.html" class="f-back">← ONE TATTOO ART</a>
+  <p class="f-copy">© 2026 One Tattoo Art. All rights reserved.</p>
+</footer>
+
+<a href="https://wa.me/919595818147" target="_blank" class="wa-btn">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
 
 <script>
-const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
-document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';setTimeout(()=>{ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px';},80);});
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+  setTimeout(() => {
+    ring.style.left = e.clientX + 'px';
+    ring.style.top  = e.clientY + 'px';
+  }, 80);
+});
 
-const cats={
-  minimal:{label:'Minimal',desc:'Clean, deliberate, and eternally elegant. Fine lines and negative space that speak louder than clutter. Minimalist tattoos are for those who believe less is infinite.',hero:'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=1400&q=80',heroVid:'',images:[
-    {src:'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80',vid:false},
-  ]},
-  geometric:{label:'Geometric',desc:'Sacred mathematics etched into skin. From Platonic solids to mandalas — every angle, every line carries meaning beyond the visible.',hero:'https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=1400&q=80',heroVid:'',images:[
-    {src:'https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1554774853-719586f82d77?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80',vid:false},
-  ]},
-  anime:{label:'Anime',desc:'Where Japanese animation culture meets fine tattoo artistry. Bold outlines, vibrant shading, and iconic characters transformed into wearable masterpieces.',hero:'https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=1400&q=80',heroVid:'https://cdn.coverr.co/videos/coverr-a-tattoo-artist-drawing-on-paper-6690/1080p.mp4',images:[
-    {src:'https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80',vid:false,vidSrc:'https://cdn.coverr.co/videos/coverr-a-tattoo-artist-drawing-on-paper-6690/1080p.mp4'},
-    {src:'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80',vid:false},
-  ]},
-  tribal:{label:'Tribal',desc:'Ancient symbols reborn. Tribal tattoos carry millennia of cultural power — bold, primal, and deeply rooted in human tradition and identity.',hero:'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=1400&q=80',heroVid:'',images:[
-    {src:'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1554774853-719586f82d77?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=600&q=80',vid:false},
-  ]},
-  realism:{label:'Realism',desc:'Photographs made permanent. Our realism artists achieve staggering detail — portraits, landscapes, and precious moments captured with photographic precision.',hero:'https://images.unsplash.com/photo-1554774853-719586f82d77?w=1400&q=80',heroVid:'https://cdn.coverr.co/videos/coverr-tattooing-a-design-on-skin-7496/1080p.mp4',images:[
-    {src:'https://images.unsplash.com/photo-1554774853-719586f82d77?w=600&q=80',vidSrc:'https://cdn.coverr.co/videos/coverr-tattooing-a-design-on-skin-7496/1080p.mp4',vid:true},
-    {src:'https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&q=80',vid:false},
-    {src:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80',vid:false},
-  ]},
+/* ── MOBILE MENU ── */
+function toggleMob() {
+  document.getElementById('mobMenu').classList.toggle('open');
+}
+
+/* ── ALL 11 CATEGORIES ── */
+const cats = {
+  blackwork: {
+    label: 'Blackwork',
+    desc: 'Bold. Uncompromising. Eternal. Blackwork transforms skin into living architecture — dense ink, sacred patterns, and geometric precision that commands attention from across the room.',
+    hero: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=1600&q=85',
+    heroVid: 'assets/videos/blackwork/',   /* folder — fill actual filename after Cloudinary */
+    images: [
+      /* ── REPLACE src with your Cloudinary URLs after upload ── */
+      { src: 'assets/images/blackwork/1.jpg', vid: false },
+      { src: 'assets/images/blackwork/2.jpg', vid: false },
+      { src: 'assets/images/blackwork/3.jpg', vid: false },
+      { src: 'assets/images/blackwork/4.jpg', vid: false },
+      { src: 'assets/images/blackwork/5.jpg', vid: false },
+      { src: 'assets/images/blackwork/6.jpg', vid: false },
+      /* placeholder fallbacks shown until real images are uploaded */
+      { src: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  color: {
+    label: 'Color',
+    desc: 'Vivid. Alive. Unforgettable. Color tattoos at One Tattoo Art are a celebration of boldness — watercolor washes, anime vibrancy, and gradients that make skin glow with life.',
+    hero: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/color/1.jpg', vid: false },
+      { src: 'assets/images/color/2.jpg', vid: false },
+      { src: 'assets/images/color/3.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  coverup: {
+    label: 'Cover-Up',
+    desc: 'Regret transformed. Our artists are specialists in cover-up design — turning old mistakes into intentional masterpieces. Every transformation begins with an honest consultation.',
+    hero: 'https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/coverup/1.jpg', vid: false },
+      { src: 'assets/images/coverup/2.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1554774853-719586f82d77?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  geometric: {
+    label: 'Geometric',
+    desc: 'Sacred mathematics etched into skin. From Platonic solids to mandalas — every angle and line carries meaning beyond the visible. Precision is the art form.',
+    hero: 'https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/geometric/1.jpg', vid: false },
+      { src: 'assets/images/geometric/2.jpg', vid: false },
+      { src: 'assets/images/geometric/3.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1554774853-719586f82d77?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  lettering: {
+    label: 'Lettering',
+    desc: 'Words that live on skin forever. From delicate scripts to bold gothic, our lettering artists craft typography with the same reverence as a calligrapher — deliberate, meaningful, permanent.',
+    hero: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/lettering/1.jpg', vid: false },
+      { src: 'assets/images/lettering/2.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  minimalist: {
+    label: 'Minimalist',
+    desc: 'Clean, deliberate, and eternally elegant. Fine lines and negative space that speak louder than clutter. Minimalist tattoos are for those who believe less is infinite.',
+    hero: 'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/minimalist/1.jpg', vid: false },
+      { src: 'assets/images/minimalist/2.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  portrait: {
+    label: 'Portrait',
+    desc: 'Faces frozen in time. Portrait tattooing demands the highest skill — capturing likeness, emotion, and soul through ink. These are memories that never fade.',
+    hero: 'https://images.unsplash.com/photo-1554774853-719586f82d77?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/portrait/1.jpg', vid: false },
+      { src: 'assets/images/portrait/2.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1554774853-719586f82d77?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  realism: {
+    label: 'Realism',
+    desc: 'Photographs made permanent. Our realism artists achieve staggering detail — portraits, animals, and precious moments captured with photographic precision that stops people in their tracks.',
+    hero: 'https://images.unsplash.com/photo-1554774853-719586f82d77?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/realism/1.jpg', vid: false },
+      { src: 'assets/images/realism/2.jpg', vid: false },
+      { src: 'assets/images/realism/3.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1554774853-719586f82d77?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1530655638484-de9f14e8a2c0?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  religious: {
+    label: 'Religious',
+    desc: 'Faith made visible. Religious tattoos carry the deepest personal meaning — deities, symbols, and sacred imagery rendered with the reverence they deserve.',
+    hero: 'https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/religious/1.jpg', vid: false },
+      { src: 'assets/images/religious/2.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1590246814883-55516d489b2d?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1562962230-16bfad2b2ce0?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  tribal: {
+    label: 'Tribal',
+    desc: 'Ancient symbols reborn. Tribal tattoos carry millennia of cultural power — bold, primal, and deeply rooted in human tradition and identity. Heritage made permanent.',
+    hero: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/tribal/1.jpg', vid: false },
+      { src: 'assets/images/tribal/2.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  },
+  others: {
+    label: 'Others',
+    desc: 'Art without categories. Custom concepts, experimental styles, and one-of-a-kind designs that defy classification. Bring your wildest idea — we will make it permanent.',
+    hero: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=1600&q=85',
+    heroVid: '',
+    images: [
+      { src: 'assets/images/others/1.jpg', vid: false },
+      { src: 'assets/images/others/2.jpg', vid: false },
+      { src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=700&q=80', vid: false, _placeholder: true },
+      { src: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=700&q=80', vid: false, _placeholder: true },
+    ]
+  }
 };
 
-const params=new URLSearchParams(window.location.search);
-const type=params.get('type')||'minimal';
-const data=cats[type]||cats.minimal;
-document.title=data.label+' Tattoos — One Tattoo Arts';
-document.getElementById('catTitle').textContent=data.label.toUpperCase();
-document.getElementById('catDesc').textContent=data.desc;
-document.getElementById('bcType').textContent=data.label;
-document.getElementById('heroBg').src=data.hero;
-if(data.heroVid){
-  const v=document.getElementById('heroBgVid');
-  v.querySelector('source').src=data.heroVid;v.style.display='block';v.load();
+/* ── BOOT PAGE ── */
+const params = new URLSearchParams(window.location.search);
+const type   = params.get('type') || 'blackwork';
+const data   = cats[type] || cats.blackwork;
+
+document.title = data.label + ' Tattoos — One Tattoo Art';
+document.getElementById('catTitle').textContent = data.label.toUpperCase();
+document.getElementById('catDesc').textContent  = data.desc;
+document.getElementById('bcType').textContent   = data.label;
+document.getElementById('heroBg').src           = data.hero;
+document.getElementById('heroBg').alt           = data.label;
+
+/* hero video — only show if heroVid is a real .mp4 path (not just a folder) */
+if (data.heroVid && data.heroVid.endsWith('.mp4')) {
+  const v   = document.getElementById('heroBgVid');
+  const src = document.getElementById('heroBgVidSrc');
+  src.src   = data.heroVid;
+  v.load();
+  v.style.display = 'block';
 }
-document.querySelectorAll('.cat-nav-btn').forEach(b=>{if(b.href.includes('type='+type))b.classList.add('active');});
-const grid=document.getElementById('catGrid');
-data.images.forEach(img=>{
-  if(img.vid&&img.vidSrc){
-    grid.innerHTML+=`<div class="cat-grid-item"><span class="vid-badge">▶ Video</span><video autoplay muted loop playsinline style="width:100%;display:block;filter:grayscale(55%);transition:filter .5s,transform .5s;"><source src="${img.vidSrc}" type="video/mp4"/></video><div class="g-overlay"><span class="g-view">VIEW</span></div></div>`;
-  } else {
-    grid.innerHTML+=`<div class="cat-grid-item"><img src="${img.src}" alt="${data.label}" loading="lazy" style=""/><div class="g-overlay"><span class="g-view">VIEW</span></div></div>`;
+
+/* highlight active nav btn */
+document.querySelectorAll('.cat-nav-btn').forEach(b => {
+  if (b.getAttribute('href').includes('type=' + type)) b.classList.add('active');
+});
+
+/* ── BUILD GRID ── */
+const grid = document.getElementById('catGrid');
+grid.innerHTML = '';
+
+/* filter out broken local paths if file not found — show placeholders */
+const itemsToShow = data.images.filter(img => {
+  /* always include placeholder (unsplash) items */
+  if (img._placeholder) return true;
+  /* include local items — browser will show broken img if file missing, which is expected until upload */
+  return true;
+});
+
+if (!itemsToShow.length) {
+  grid.innerHTML = '<div class="empty-msg">No works found in this category yet.</div>';
+} else {
+  itemsToShow.forEach((img, i) => {
+    const el = document.createElement('div');
+    el.className = 'cat-grid-item';
+    el.style.animationDelay = (i * 0.06) + 's';
+
+    if (img.vid && img.vidSrc) {
+      el.innerHTML = `
+        <span class="vid-badge">▶ Video</span>
+        <video autoplay muted loop playsinline>
+          <source src="${img.vidSrc}" type="video/mp4"/>
+        </video>
+        <div class="g-overlay">
+          <span class="g-tag">${data.label}</span>
+          <span class="g-view">VIEW</span>
+        </div>`;
+    } else {
+      el.innerHTML = `
+        <img src="${img.src}" alt="${data.label}" loading="lazy"/>
+        <div class="g-overlay">
+          <span class="g-tag">${data.label}</span>
+          <span class="g-view">VIEW</span>
+        </div>`;
+    }
+
+    el.addEventListener('click', () => openModal(i));
+    grid.appendChild(el);
+  });
+}
+
+/* ── MODAL ── */
+let cur = 0;
+let gridItems = [];
+
+function openModal(idx) {
+  gridItems = Array.from(document.querySelectorAll('.cat-grid-item'));
+  cur = idx;
+  showModalItem(cur);
+  document.getElementById('modal').classList.add('open');
+}
+
+function showModalItem(i) {
+  const item    = gridItems[i];
+  if (!item) return;
+  const imgEl   = item.querySelector('img');
+  const vidEl   = item.querySelector('video');
+  const tag     = item.querySelector('.g-tag');
+  const mImg    = document.getElementById('modalImg');
+  const mVid    = document.getElementById('modalVid');
+  const mCat    = document.getElementById('modalCat');
+
+  mCat.textContent = tag ? tag.textContent : data.label;
+
+  if (vidEl) {
+    mImg.style.display = 'none';
+    mVid.src           = vidEl.querySelector('source') ? vidEl.querySelector('source').src : vidEl.src;
+    mVid.style.display = 'block';
+    mVid.load();
+  } else if (imgEl) {
+    mVid.style.display = 'none';
+    mImg.src           = imgEl.src;
+    mImg.style.display = 'block';
   }
+}
+
+window.closeModal        = () => document.getElementById('modal').classList.remove('open');
+window.closeModalOutside = (e) => { if (e.target === document.getElementById('modal')) closeModal(); };
+window.nextImg           = () => { cur = (cur + 1) % gridItems.length; showModalItem(cur); };
+window.prevImg           = () => { cur = (cur - 1 + gridItems.length) % gridItems.length; showModalItem(cur); };
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape')     closeModal();
+  if (e.key === 'ArrowRight') nextImg();
+  if (e.key === 'ArrowLeft')  prevImg();
 });
 </script>
 </body>
